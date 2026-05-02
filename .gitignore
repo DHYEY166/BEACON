@@ -1,0 +1,57 @@
+# Environment
+.env
+.env.local
+.env*.local
+
+# Database
+*.db
+
+# Binary vector files
+*.bin
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+.next/
+/out/
+/build
+
+# iOS
+mobile/ios/Pods/
+mobile/ios/build/
+*.xcworkspace
+*.xcuserdata
+
+# Expo / mobile build artifacts
+.expo/
+mobile/dist/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel
+
+# Xcode local
+mobile/ios/.xcode.env.local
+
+# Data pipeline outputs (generated, binary or large)
+data/outputs/
+data/data/
