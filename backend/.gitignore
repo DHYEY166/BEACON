@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+data/outputs/chunk_metadata.json
+data/outputs/chunk_vectors.bin
+checkpoints/
+*.egg-info/
+dist/
