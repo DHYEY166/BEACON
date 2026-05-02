@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+android/
+ios/
+assets/chunk_metadata.json
+assets/*.bin
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.env

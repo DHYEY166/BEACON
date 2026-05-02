@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "newArchEnabled": false,
+    "name": "BEACON",
+    "slug": "beacon",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#1a1a2e",
+    "ios": {
+      "bundleIdentifier": "org.beacon.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "BEACON uses the microphone to capture your voice query for offline medical guidance.",
+        "NSSpeechRecognitionUsageDescription": "BEACON uses speech recognition to transcribe your voice query for offline medical guidance.",
+        "NSLocationWhenInUseUsageDescription": "BEACON uses your location to pre-fill the GPS coordinates in SMS reports.",
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
+    },
+    "android": {
+      "package": "org.beacon.app",
+      "permissions": [
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "SEND_SMS",
+        "READ_PHONE_STATE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "plugins": [
+      "expo-av",
+      "expo-location"
+    ],
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "assets": [
+      "assets/chunk_metadata.json"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e0059d74-7b0f-41bd-8542-fcca1eb3b1ae"
+      }
+    },
+    "owner": "dhyey166"
+  }
+}
