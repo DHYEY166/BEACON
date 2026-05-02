@@ -1,0 +1,120 @@
+---
+base_model: google/gemma-4-E4B-it
+library_name: peft
+tags:
+  - gemma4
+  - lora
+  - qlora
+  - emergency-response
+  - humanitarian
+  - medical
+license: gemma
+language:
+  - en
+  - sw
+  - hi
+  - ha
+---
+
+# BEACON — Gemma 4 E4B QLoRA Fine-Tune
+
+**BEACON** (Basic Emergency Assistance and Community Operations Network) is a decision support tool for trained community first responders operating in low-resource and humanitarian settings.
+
+This repository contains a **QLoRA adapter** fine-tuned on top of `google/gemma-4-E4B-it` for structured emergency guidance.
+
+---
+
+## Model Description
+
+BEACON converts a spoken or typed field report into a structured JSON response with:
+
+- `urgency` — IMMEDIATE / URGENT / ROUTINE
+- `situation_summary` — plain-language assessment (no disease names)
+- `containment_check` — outbreak investigation prompt
+- `immediate_actions` — ordered step-by-step actions
+- `do_not` — critical contraindications
+- `escalate_if` — threshold conditions for referral
+- `confidence` — HIGH / MEDIUM / LOW
+- `source` — WHO SPHERE / IMCI / Red Cross protocol cited
+
+---
+
+## Training
+
+| Parameter | Value |
+|---|---|
+| Base model | google/gemma-4-E4B-it |
+| Method | QLoRA (4-bit NF4, bfloat16 compute) |
+| LoRA rank | 16 |
+| LoRA alpha | 32 |
+| Target modules | language_model attention layers (q/k/v/o_proj) |
+| Trainable params | 9,076,736 (0.11%) |
+| Training examples | 700 |
+| Epochs | 3 |
+| Final train loss | 0.018 |
+| Hardware | A100 (Google Colab Pro) |
+| Training time | ~29 minutes |
+
+**Training data** covers 6 emergency categories grounded in WHO SPHERE Handbook 2018, IMCI Emergency Protocols, Red Cross First Aid Manual, and UNHCR Field Operations Guide:
+- Waterborne illness / outbreak response
+- Trauma and triage (including mass casualty)
+- Pediatric emergencies
+- Flood / environmental emergencies
+- Resource calculation under scarcity
+- Multi-patient scenarios
+
+Multilingual queries (Swahili, Hindi, Hausa) are included in the training set.
+
+---
+
+## Usage
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
+import torch
+
+base = AutoModelForCausalLM.from_pretrained("google/gemma-4-E4B-it", torch_dtype=torch.bfloat16, device_map="auto")
+model = PeftModel.from_pretrained(base, "dhyey166/beacon-gemma4-e4b")
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-4-E4B-it")
+
+SYSTEM_PROMPT = (
+    "You are BEACON, a decision support tool for trained community first responders. "
+    "You provide structured emergency guidance based on WHO SPHERE Handbook and IMCI protocols. "
+    "Always respond with valid JSON. Never name a disease in situation_summary. "
+    "Always include containment_check for outbreak scenarios."
+)
+
+query = "Family with severe diarrhea and vomiting for two days. Shared water source."
+prompt = (
+    f"<start_of_turn>system\n{SYSTEM_PROMPT}<end_of_turn>\n"
+    f"<start_of_turn>user\n{query}<end_of_turn>\n"
+    f"<start_of_turn>model\n"
+)
+
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=1024, do_sample=False, repetition_penalty=1.1)
+print(tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True))
+```
+
+---
+
+## Intended Use
+
+- Community health workers and trained first responders in humanitarian settings
+- Offline-capable mobile deployment (paired with on-device BM25 RAG)
+- Decision support only — not a replacement for clinical judgment or trained medical staff
+
+## Out of Scope
+
+- Surgical procedures
+- Drug prescription and dosing
+- Diagnosis of specific diseases
+- Any use without a trained first responder present
+
+---
+
+## Built for
+
+[The Gemma 4 Good Hackathon](https://www.kaggle.com/competitions/the-gemma-4-good-hackathon)
