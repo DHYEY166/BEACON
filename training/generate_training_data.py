@@ -15,10 +15,10 @@ import os
 import random
 import time
 from pathlib import Path
-from huggingface_hub import InferenceClient
+from openai import OpenAI
 
 HF_TOKEN = os.environ.get("HF_TOKEN")
-MODEL    = "google/gemma-4-27b-it"
+MODEL    = "google/gemma-4-26B-A4B-it"
 TARGET   = 700
 BASE_CAP = 350   # stop collecting base pairs once we hit this (augment the rest)
 
@@ -74,7 +74,7 @@ def load_chunks(path: Path) -> list[dict]:
     return chunks
 
 
-def generate_pairs(client: InferenceClient, chunk: dict, n: int = 2) -> list[dict]:
+def generate_pairs(client: OpenAI, chunk: dict, n: int = 2) -> list[dict]:
     text   = chunk.get("text", "").strip()
     source = chunk.get("id", "WHO/SPHERE")
     if not text:
@@ -165,7 +165,10 @@ if __name__ == "__main__":
             "HF_TOKEN not set. Run: export HF_TOKEN=hf_..."
         )
 
-    client = InferenceClient(token=HF_TOKEN)
+    client = OpenAI(
+        base_url="https://router.huggingface.co/v1",
+        api_key=HF_TOKEN,
+    )
 
     chunks_path = Path("data/outputs/plain_language_chunks.jsonl")
     if not chunks_path.exists():

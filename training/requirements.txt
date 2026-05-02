@@ -10,3 +10,4 @@ optimum>=1.17.0
 sentence-transformers>=2.5.1
 pypdf>=4.0.0
 numpy>=1.26.0
+openai>=1.0.0
