@@ -1,0 +1,122 @@
+UNHCR FIELD OPERATIONS GUIDE — EMERGENCY HEALTH RESPONSE
+
+CHAPTER 1: RAPID HEALTH ASSESSMENT IN DISPLACEMENT SETTINGS
+
+INITIAL ASSESSMENT PRIORITIES
+In the first 24 to 48 hours after displacement, the priority health concerns are: crude mortality rate, causes of death, nutritional status especially in children under 5, measles immunisation coverage, availability of water and sanitation, access to health services. A crude mortality rate above 1 death per 10,000 people per day indicates emergency threshold. A rate above 2 per 10,000 per day is catastrophic and requires immediate scale-up of response.
+
+RAPID ASSESSMENT DATA COLLECTION
+Key data to collect in first 72 hours: estimated population by age and sex, number of deaths in past week and causes, number of people with active illness, water source and litres per person per day, number of functioning latrines per population, food distribution status, access to health care. Collect data by walking through settlement and interviewing community leaders, health workers, and households. Use standardised forms.
+
+CRUDE MORTALITY RATE CALCULATION
+CMR per 10,000 per day equals number of deaths in period divided by mid-period population, multiplied by 10,000, divided by number of days. Example: 35 deaths in 7 days in population of 25,000 equals 35 divided by 25,000 times 10,000 divided by 7 equals 2.0 per 10,000 per day — catastrophic threshold exceeded.
+
+CHAPTER 2: OUTBREAK DETECTION AND RESPONSE
+
+OUTBREAK THRESHOLD DEFINITIONS
+Suspected outbreak: more cases than expected for the time and place. Alert threshold: number of cases triggers investigation and increased surveillance. Action threshold: number of cases requires active response including case management, contact tracing, and environmental control. Thresholds vary by disease — for cholera one confirmed case in area where cholera is not endemic is sufficient for full outbreak response.
+
+OUTBREAK INVESTIGATION STEPS
+Step 1: Verify diagnosis — confirm cases meet case definition, collect specimens if possible. Step 2: Confirm outbreak — compare to baseline, determine if cases exceed expected. Step 3: Define cases — develop case definition, identify cases systematically. Step 4: Describe cases — by person who is affected, by place where they became ill, by time when cases occurred. Step 5: Generate hypotheses — what is the source, what is the mode of transmission. Step 6: Test hypotheses — compare case and control exposure histories. Step 7: Implement control measures — do not wait for investigation to be complete. Step 8: Communicate findings.
+
+CASE DEFINITION FOR FIELD USE
+A case definition has three components: clinical criteria describing symptoms and signs, epidemiological criteria linking to exposure time place or person, and laboratory criteria if testing is available. In field settings without laboratory support use suspected case definitions based on clinical and epidemiological criteria alone. Example suspected cholera case: acute watery diarrhoea in a patient aged 2 years or more, onset of diarrhoea within 24 hours, in an area where cholera is known or suspected.
+
+CONTACT TRACING PROTOCOL
+Identify all contacts of confirmed cases. A contact is any person who has been exposed to a case during their infectious period in a way that could result in transmission. Document contacts with name, address, method to reach them. Monitor contacts daily for symptoms for the duration of the incubation period of the disease. If contact develops symptoms they become a case and their contacts must be traced.
+
+ENVIRONMENTAL INVESTIGATION
+Visit homes of cases to assess: water source used before illness, sanitation facilities, food handling practices, animals in household. Map case locations — geographic clustering suggests common source. Time clustering suggests point source versus ongoing transmission. Collect water samples from suspected sources if laboratory available. Photograph conditions for documentation.
+
+CHAPTER 3: WATERBORNE DISEASE PREVENTION AND CONTROL
+
+WATER QUALITY STANDARDS
+Minimum water quantity: 15 litres per person per day for survival needs. Full health needs: 20 litres per person per day. Maximum walking distance to water point: 500 metres. Maximum queue time: 30 minutes. Water quality at point of collection: zero E. coli per 100ml. Residual chlorine at point of collection: 0.2 to 0.5mg per litre free chlorine. Water quality deteriorates between collection and consumption — household water treatment needed.
+
+CHLORINATION OF WATER SUPPLIES
+Target: 0.2 to 0.5mg per litre free residual chlorine at point of use. Chlorine demand varies by water turbidity — turbid water needs more chlorine. Chlorine stock solution: dissolve 10 grams of calcium hypochlorite 70% in 1 litre of water to make 1% solution. Add 1ml of 1% solution per 10 litres of water to achieve approximately 0.5mg per litre. Test with pool testing kit or colour comparator after 30 minutes contact time. If residual below 0.2mg per litre add more chlorine and retest.
+
+HOUSEHOLD WATER TREATMENT
+Boiling: bring to rolling boil for 1 minute, allow to cool in covered container, transfer to clean covered storage vessel with narrow mouth. Adequate for emergency use. Chlorination: follow manufacturer instructions for sodium hypochlorite household bleach. Typically 2 drops of household bleach per litre of clear water, 4 drops per litre of cloudy water. Wait 30 minutes before drinking. Ceramic filtration: effective for bacteria but not all viruses — use with chlorination for full protection. Solar disinfection SODIS: fill clear PET bottles, expose to direct sunlight for 6 hours or 2 days if cloudy.
+
+LATRINE CONSTRUCTION AND MAINTENANCE
+Minimum standard: one latrine per 20 people maximum, maximum 50 metres from dwellings, minimum 30 metres from water source, minimum 1.5 metres above water table. Simple pit latrine: minimum 1.5 metres deep, cover with slab and superstructure, provide handwashing facility with soap or ash at latrine entrance. Maintenance: empty when pit reaches 50cm from top, treat with lime to reduce flies and odours, ensure superstructure is in good repair.
+
+FAECAL MANAGEMENT IN DISPLACEMENT
+When latrines not available: defecate at least 50 metres from water sources, 30 metres from dwellings. Cover faeces with soil immediately. Provide plastic bags or small shovels if no other options. Priority is to prevent contamination of water sources. Establish open defecation free zones with community agreement. Community hygiene promoters identify and address open defecation.
+
+FOOD SAFETY IN EMERGENCIES
+High-risk foods: raw or undercooked meat and fish, unpasteurised dairy, cut fruits and vegetables left at ambient temperature, pre-cooked foods reheated inadequately. Temperature danger zone: 5 to 60 degrees Celsius where bacteria multiply rapidly. Safe food handling: wash hands before preparing food, cook food thoroughly, keep cooked food above 60 degrees or below 5 degrees, separate raw and cooked food, use safe water for food preparation.
+
+SOLID WASTE MANAGEMENT
+Communal refuse bins or pits within 15 metres of every dwelling. Collect and dispose of refuse at minimum twice per week. Burial or burning of waste if no collection available. Medical waste from health facilities must be managed separately — sharps in puncture-resistant containers, infectious waste incinerated or buried in secured pit. Waste accumulation increases rodent and fly populations which transmit disease.
+
+VECTOR CONTROL
+Mosquito control: remove standing water, use insecticide-treated nets especially for pregnant women and children under 5, indoor residual spraying with pyrethroid insecticides. Fly control: cover food and water, maintain latrines with fly-proof slabs, dispose of animal faeces. Rodent control: store food in rodent-proof containers, seal gaps in shelters, use traps rather than poison in living areas. Lice control in crowded settings: permethrin shampoo or powder applied to clothing and bedding.
+
+CHAPTER 4: HEALTH FACILITY MANAGEMENT IN EMERGENCIES
+
+TRIAGE AT HEALTH FACILITY ENTRY
+Establish triage at facility entrance — do not allow crowds to form inside. Triage nurse assesses all arrivals. Priority 1 immediate: life-threatening conditions requiring intervention in minutes. Priority 2 urgent: serious conditions stable for 30 to 60 minutes. Priority 3 routine: non-urgent conditions can wait. Priority 4 expectant: unsurvivable injuries or conditions given available resources. Reassess all waiting patients every 30 minutes.
+
+OUTPATIENT CONSULTATION STRUCTURE
+For each consultation: identify presenting complaint, take relevant history, perform focused examination, diagnose using IMCI or clinical algorithms, treat according to standard protocols, counsel on medication use home care and danger signs, document findings. Target consultation time: 10 to 15 minutes. If longer consultations needed for complex cases use separate queue.
+
+ESSENTIAL MEDICINES FOR FIELD HEALTH POST
+Oral: amoxicillin, ciprofloxacin, metronidazole, artemether-lumefantrine, paracetamol, oral rehydration salts, zinc tablets, vitamin A capsules, folic acid, iron tablets, mebendazole. Injectable: ampicillin, benzylpenicillin, gentamicin, artesunate or artemether, dexamethasone, epinephrine, oxytocin. IV fluids: Ringer lactate, normal saline, 5% dextrose. Essential supplies: needles and syringes, IV cannulae, blood glucose test strips, malaria rapid diagnostic tests, HIV test kits.
+
+REFERRAL SYSTEM
+Establish referral pathway to higher level of care before patients need it. Know: which facility accepts emergency referrals, travel time, mode of transport, cost, facility capacity. Document all referrals: patient information, diagnosis, treatment given, reason for referral. Follow up on referred patients when possible. Two-way referral — receiving facility should communicate outcome to referring provider. Pre-position transport or maintain contact with community vehicles for emergency referrals.
+
+CHAPTER 5: NUTRITION IN EMERGENCIES
+
+NUTRITION ASSESSMENT — POPULATION LEVEL
+Measure in children 6 to 59 months using MUAC and weight for height. Survey at least 30 clusters of 30 children each using cluster sampling. Calculate prevalence of global acute malnutrition weight for height below minus 2 Z-score or MUAC below 12.5cm or oedema. Emergency threshold: global acute malnutrition above 15% or above 10% with aggravating factors. Critical threshold: above 30%.
+
+BLANKET SUPPLEMENTARY FEEDING PROGRAMME
+In nutrition emergency provide supplementary food to all vulnerable groups regardless of nutritional status. Target groups: children 6 to 59 months, pregnant and lactating women, people with specific medical conditions including TB and HIV. Ready-to-use supplementary food 500kcal per day. Continue until nutrition situation improves below emergency threshold.
+
+TARGETED SUPPLEMENTARY FEEDING
+For children and adults with moderate acute malnutrition — MUAC 11.5 to 12.4cm, weight for height minus 2 to minus 3 Z-score, no oedema. Provide ready-to-use supplementary food 500kcal per day for 8 to 12 weeks. Monitor monthly. Discharge criteria: weight for height above minus 2 Z-score for two consecutive visits.
+
+INFANT AND YOUNG CHILD FEEDING IN EMERGENCIES
+Protect breastfeeding as the safest infant feeding option. Do not promote formula feeding. If breastfeeding not possible, managed donor breast milk or wet nursing is second option. If these not available, use formula with appropriate support. Avoid donations of baby formula — creates dependency. Complementary foods from 6 months: safe nutritious local foods mashed or pureed, gradually increasing texture and variety.
+
+THERAPEUTIC FEEDING FOR SEVERE ACUTE MALNUTRITION
+Inpatient: F-75 75kcal per 100ml, low sodium low protein for stabilisation. F-100 100kcal per 100ml for transition and rehabilitation. Community-based: ready-to-use therapeutic food RUTF 500kcal per 100g sachet, one or two sachets per day depending on weight. Weekly monitoring until discharge criteria met: no oedema for 2 consecutive weeks, MUAC above 11.5cm, clinically well.
+
+CHAPTER 6: REPRODUCTIVE HEALTH IN EMERGENCIES
+
+MINIMUM INITIAL SERVICE PACKAGE
+Reproductive health priority actions in first days: prevent and manage consequences of sexual violence, prevent excess maternal and neonatal deaths and illness, prevent HIV transmission, plan for comprehensive reproductive health services. Ensure clean delivery kits available for expected births. Establish referral pathway to surgical obstetric care.
+
+OBSTETRIC EMERGENCIES RECOGNITION
+Danger signs in pregnancy: heavy vaginal bleeding, severe headache with visual disturbance, fits or convulsions, abnormal positioning of baby, cord or arm prolapse, labour lasting more than 12 hours, retained placenta more than 30 minutes after delivery. Any obstetric danger sign requires immediate referral to facility with surgical capability.
+
+MANAGEMENT OF DELIVERY COMPLICATIONS
+Postpartum haemorrhage — leading cause of maternal death: give oxytocin 10 IU IM immediately after delivery of baby, uterine massage, bladder emptying, bimanual compression if uterus not contracting. Give misoprostol 600mcg sublingually or rectally if oxytocin not available. IV fluids. Urgent referral if bleeding not controlled. Eclampsia — high blood pressure with fits: give magnesium sulphate 4g IV slowly then 1g per hour infusion. Antihypertensives: hydralazine 5mg IV slowly, repeat every 20 minutes.
+
+SEXUAL AND GENDER-BASED VIOLENCE RESPONSE
+All health workers must know: how to receive survivors with dignity and confidentiality, what services are available, how to refer. Medical management within 72 hours: emergency contraception, treatment for sexually transmitted infections, HIV post-exposure prophylaxis, tetanus toxoid if wounds. Document with patient consent. Mandatory reporting requirements vary by context — know local law. Do not pressure survivor to report to authorities.
+
+CHAPTER 7: MENTAL HEALTH AND PSYCHOSOCIAL SUPPORT
+
+PSYCHOLOGICAL FIRST AID PRINCIPLES
+Look: assess needs and concerns, observe for acute distress. Listen: give full attention, ask what happened and what they need, listen without pressure to talk. Link: connect to information and services, social supports, basic needs. Do not: pressure people to share details, give false reassurances, make assumptions about what they feel or need.
+
+RECOGNISING ACUTE STRESS REACTIONS
+Normal acute stress reactions in first days: shock, disbelief, anxiety, difficulty sleeping, repetitive memories. These are expected responses and usually resolve without treatment. Symptoms that indicate need for support: severe disorientation or confusion, inability to care for self or children, behaviour harmful to self or others, complete inability to function. Refer these individuals for psychosocial support.
+
+SUICIDE RISK ASSESSMENT
+Ask directly: are you having thoughts of harming yourself or ending your life. Listen without judgment. Assess: do they have a plan, do they have means, have they made attempts before, do they have support. Do not leave alone if at immediate risk. Remove means if possible. Refer to mental health professional. Involve family or trusted community member if safe to do so.
+
+CHAPTER 8: SUPPLY CHAIN AND COLD CHAIN
+
+MEDICAL SUPPLY REQUISITION
+Calculate monthly consumption: count items used in past 3 months, divide by 3 for average monthly consumption. Safety stock: hold 2 months supply as buffer against delivery delays. Order quantity: 3 months supply minus current stock. Submit order with lead time consideration — if delivery takes 6 weeks order 6 weeks before stock runs out.
+
+COLD CHAIN MANAGEMENT
+Vaccines must be kept between 2 and 8 degrees Celsius at all times. Monitor temperature twice daily — morning and afternoon. Record in temperature log. If temperature has gone above 8 degrees or below 0 degrees for any vaccine other than oral polio: do not discard immediately, quarantine affected vaccines, contact supervisor to assess viability. Most vaccines can tolerate brief temperature excursions within defined ranges.
+
+REPORTING AND DOCUMENTATION
+Monthly health facility report should include: number of outpatient consultations by age and sex, number of inpatient admissions and deaths, disease surveillance data by diagnosis, stock status of key medicines and supplies, referrals made and received, staffing status. Submit by 5th of following month to district health team. Urgent disease reports submitted within 24 hours of detection.

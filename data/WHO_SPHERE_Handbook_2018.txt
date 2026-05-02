@@ -1,0 +1,123 @@
+WHO EMERGENCY TRIAGE GUIDELINES
+
+TRIAGE PRIORITY LEVELS
+Immediate (Red): Life-threatening conditions requiring immediate intervention. Airway obstruction, severe respiratory distress, uncontrolled haemorrhage, unconscious patient with abnormal breathing, shock with altered consciousness.
+Urgent (Yellow): Serious conditions that can wait 30-60 minutes. Fractures, moderate burns, altered consciousness with stable breathing, severe pain.
+Routine (Green): Minor injuries and illnesses. Small lacerations, minor burns under 10% BSA, walking wounded.
+Expectant (Black): Unsurvivable injuries or no signs of life. No pulse, no breathing after airway opening attempt.
+
+SHOCK RECOGNITION AND MANAGEMENT
+Signs of shock: rapid weak pulse over 100 bpm, systolic BP under 90 mmHg, cold clammy skin, altered consciousness, rapid breathing over 20 breaths per minute.
+Management: lay patient flat, elevate legs 30 cm unless head injury suspected, control external bleeding with direct pressure, establish IV access if available, administer IV fluids Ringer lactate 500ml bolus, reassess every 5 minutes.
+Do not give oral fluids to a shocked patient. Do not leave patient unattended.
+
+HAEMORRHAGE CONTROL
+Apply direct pressure with clean cloth for minimum 10 minutes without releasing. For limb bleeding not controlled by direct pressure, apply tourniquet 5-7 cm above wound, note time of application. Do not remove tourniquet once applied. Wound packing with gauze for junctional bleeding.
+
+AIRWAY MANAGEMENT
+Head-tilt chin-lift for unconscious patient without suspected spinal injury. Jaw thrust if spinal injury suspected. Recovery position for unconscious breathing patient. Suction visible secretions. Do not insert fingers blindly into airway.
+
+BURNS MANAGEMENT
+Remove clothing and jewellery from burned area. Cool burn with clean running water 20 degrees for 20 minutes. Do not use ice, butter, or toothpaste. Cover with clean non-fluffy material. For burns over 20% BSA give IV fluids Ringer lactate. Parkland formula: 4ml per kg body weight per percentage BSA burned, half in first 8 hours, half in next 16 hours.
+
+---
+
+WATERBORNE ILLNESS AND CHOLERA RESPONSE
+
+CHOLERA RECOGNITION
+Sudden onset profuse watery diarrhoea described as rice-water stool, rapid dehydration, vomiting, muscle cramps. No fever in most cases. High case fatality if untreated.
+
+DEHYDRATION ASSESSMENT
+Severe dehydration: sunken eyes, very dry mouth, skin pinch goes back very slowly over 2 seconds, lethargic or unconscious, unable to drink. Requires immediate IV rehydration.
+Some dehydration: restless irritable, sunken eyes, dry mouth, drinks eagerly. Oral rehydration therapy sufficient.
+No dehydration: alert, normal eyes, moist mouth, normal skin pinch.
+
+ORAL REHYDRATION THERAPY
+ORT formula: 1 litre boiled or treated water + 6 level teaspoons sugar + half level teaspoon salt. Give 200ml after each loose stool for adults. Give 100ml after each loose stool for children under 2 years. Give 150ml after each loose stool for children 2-10 years. Continue feeding. Seek care if vomiting persists, diarrhoea worsens, blood in stool, or patient unable to drink.
+
+SEVERE DEHYDRATION IV REHYDRATION
+Ringer lactate 100ml per kg body weight for adults over 3 hours. For children under 5: 30ml per kg in first 30 minutes then 70ml per kg over 2.5 hours. Reassess after each phase. Switch to ORT when patient can drink.
+
+ISOLATION AND HYGIENE
+Isolate suspected cases immediately. Dedicated toilet or latrine for cholera patients. Chlorine solution 0.5% for environmental disinfection. Hand washing with soap before and after patient contact. Boil or treat all drinking water. Report suspected outbreak immediately to health authority.
+
+OUTBREAK CONTAINMENT
+Containment check: identify and isolate case, trace contacts from 5 days before symptom onset, disinfect household, ensure safe water source, establish ORT corner at health facility, report to district health officer within 24 hours. Do not name disease to avoid panic. Describe as severe diarrhoea requiring immediate treatment.
+
+---
+
+PEDIATRIC EMERGENCY CARE
+
+NEONATAL DANGER SIGNS
+Not feeding, convulsions, fast breathing over 60 breaths per minute, severe chest indrawing, temperature over 37.5 degrees or below 35.5 degrees, umbilical redness or discharge, jaundice before 24 hours of age. All danger signs require urgent referral.
+
+SEVERE ACUTE MALNUTRITION
+MUAC under 11.5 cm or weight for height below minus 3 Z-score or bilateral pitting oedema. Admit to inpatient therapeutic feeding. F-75 formula first 48 hours for stabilisation. Do not give high-energy food in first 48 hours due to refeeding syndrome risk. Treat infections: amoxicillin, treat malaria if positive RDT, vitamin A, folic acid. Transition to F-100 after stabilisation.
+
+FEBRILE CONVULSIONS
+Place child on side, protect from injury, do not restrain, do not insert anything in mouth. Time seizure. Give rectal diazepam 0.5mg per kg if seizure over 5 minutes. Reassess airway after seizure. If fever present give paracetamol 15mg per kg. Refer if first seizure, seizure over 15 minutes, or focal features.
+
+RESPIRATORY DISTRESS IN CHILDREN
+Count breaths for full 60 seconds. Fast breathing: over 60 in infants under 2 months, over 50 in infants 2-12 months, over 40 in children 1-5 years. Chest indrawing, nasal flaring, grunting indicate severe pneumonia. Give amoxicillin 40mg per kg twice daily for 5 days. Refer severe cases. Do not give cough suppressants.
+
+---
+
+TRAUMA AND WOUND CARE
+
+SPINAL INJURY PRECAUTIONS
+Suspect spinal injury in all unconscious trauma patients, high-speed mechanism, fall from height, diving injury, significant head or facial trauma. Maintain cervical spine immobilisation until cleared. Do not flex extend or rotate neck. Log roll with three rescuers to maintain alignment. Perform jaw thrust not head-tilt for airway.
+
+OPEN FRACTURE MANAGEMENT
+Cover with clean moist dressing, do not attempt to push bone back. Immobilise in position found with improvised splint. Do not straighten angulated fractures with neurovascular compromise. Give antibiotic prophylaxis amoxicillin-clavulanate if available. Elevate limb. Assess and document distal pulse sensation and movement before and after splinting.
+
+WOUND CLOSURE
+Clean contaminated wounds before closure. Irrigate with clean water or saline under pressure. Debride dead tissue. Primary closure only for clean wounds under 6 hours old. Delayed primary closure at 48-72 hours for contaminated wounds, bite wounds, and wounds over 6 hours old. Use sutures or steri-strips. Change dressing daily. Signs of infection: increasing pain, swelling, redness, warmth, discharge.
+
+HEAD INJURY MONITORING
+Glasgow Coma Scale: eyes 1-4, verbal 1-5, motor 1-6, total 3-15. GCS under 8 indicates severe injury and airway protection needed. Neurological observations every 30 minutes: GCS, pupils size and reactivity, limb movement. Deteriorating GCS is emergency requiring immediate evacuation. Do not give morphine to head injured patient without airway protection.
+
+---
+
+FLOOD AND ENVIRONMENTAL EMERGENCIES
+
+FLOOD EVACUATION PRIORITIES
+Evacuate before floodwaters reach 30cm depth. Do not walk in moving water above ankle height. Driving hazard: 30cm of water can move most vehicles. Do not attempt flood rescue without rope and trained partner. Identify non-swimmers, elderly, children, disabled persons for priority evacuation assistance.
+
+POST-FLOOD HEALTH RISKS
+Contaminated water causes cholera, typhoid, leptospirosis, hepatitis A. Do not use floodwater for drinking, cooking, or washing. Boil or treat all water. Report animal deaths to health authority — leptospirosis risk. Clean and disinfect all food contact surfaces. Discard food in contact with floodwater. Mosquito breeding increases in standing water — malaria and dengue risk increases 2-3 weeks after flooding.
+
+HYPOTHERMIA
+Mild: shivering, cold skin, confusion. Moderate: reduced shivering, drowsy, stumbling. Severe: no shivering, rigid, unconscious, slow weak pulse.
+Remove wet clothing, insulate from ground, cover with dry blankets, give warm sweet drinks if conscious and able to swallow. Do not rub extremities. Do not give alcohol. Treat moderate and severe cases as medical emergency, handle gently, horizontal position, warm core first not extremities.
+
+SNAKE BITE MANAGEMENT
+Immobilise bitten limb at heart level, remove jewellery and tight clothing near bite, mark swelling edge with pen and time every 15 minutes, keep patient calm and still. Do not incise or suck venom, do not apply tourniquet, do not apply ice. Transport urgently to facility with antivenom. Note snake appearance if possible without risk.
+
+---
+
+RESOURCE CALCULATION AND SUPPLY
+
+SPHERE MINIMUM STANDARDS
+Water: 15 litres per person per day minimum, 20 litres for full health and hygiene. Latrine: maximum 20 persons per latrine, maximum 50 metres from shelter. Shelter space: 3.5 square metres per person minimum living space. Food: 2100 kilocalories per person per day minimum energy requirement.
+
+ORS STOCK CALCULATION
+Calculate ORS packets needed: estimate 10% of population develops diarrhoea in outbreak, each case requires 5-10 ORS packets. Example: camp of 5000 people, 500 expected cases, 2500-5000 ORS packets required for first week. Reorder when stock falls below 2-week supply.
+
+IV FLUID REQUIREMENTS FOR CHOLERA OUTBREAK
+Estimate 5-10 severe cases per 1000 population per week during active outbreak. Each severe adult case requires 6-10 litres Ringer lactate. Ensure 10 litres per anticipated severe case plus 20% buffer stock. Check expiry dates and storage conditions weekly.
+
+COLD CHAIN REQUIREMENTS
+Vaccines require storage 2-8 degrees Celsius. Do not freeze vaccines except oral polio. Discard vaccines exposed to freezing. Ice-lined refrigerator capacity needed: 1 litre refrigerator space per 100 population for routine immunisation. Solar-powered refrigerator preferred in areas with unreliable electricity.
+
+---
+
+COMMUNICATION AND REPORTING
+
+INCIDENT REPORTING FORMAT
+Date and time, location GPS coordinates if available, type of incident, number affected, number dead, current needs ranked by priority, actions taken, resources on hand, resources needed, contact person and method.
+
+SMS REPORTING WHEN NO VOICE AVAILABLE
+BEACON format: INCIDENT [date] [location] [type] [number affected] [immediate need] [contact]. Keep under 160 characters. Example: INCIDENT 2024-01-15 Kigali-Nyamirambo cholera 47cases ORS+IV-fluids +250788123456
+
+COMMUNITY ALERT PROTOCOL
+Alert community leader first, district health officer within 24 hours of suspected outbreak, national level within 48 hours. Use existing community alert tree if available. Do not cause panic — describe situation factually and state what help is coming.

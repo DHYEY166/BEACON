@@ -1,0 +1,79 @@
+IMCI INTEGRATED MANAGEMENT OF CHILDHOOD ILLNESS — EMERGENCY PROTOCOLS
+
+DANGER SIGNS — ASSESS ALL CHILDREN FIRST
+General danger signs requiring immediate referral: child unable to drink or breastfeed, child vomits everything, child has had convulsions during this illness, child is lethargic or unconscious. Any general danger sign means the child is severely ill and needs urgent referral.
+
+RAPID ASSESSMENT ORDER
+Step 1: Check for general danger signs. Step 2: Assess main symptoms — cough or breathing difficulty, diarrhoea, fever, ear problems, malnutrition. Step 3: Check immunisation and Vitamin A status. Step 4: Assess feeding practices. Do not delay life-saving treatment while completing full assessment.
+
+PNEUMONIA IN CHILDREN
+Count breaths for one full minute — a child who has been crying or moving must be calm first. Fast breathing: 60 or more per minute in infant under 2 months, 50 or more per minute in infant 2 to 11 months, 40 or more per minute in child 1 to 5 years. Chest indrawing: lower chest moves in when child breathes in. Chest indrawing plus fast breathing indicates severe pneumonia — refer urgently. Give first dose of antibiotic before referral.
+
+PNEUMONIA TREATMENT — NON-SEVERE
+Amoxicillin oral: 40mg per kg body weight per day in 2 divided doses for 5 days. Advise caregiver to return immediately if breathing becomes very difficult, child unable to drink, child becomes sicker. Follow up in 2 days.
+
+SEVERE PNEUMONIA TREATMENT
+Give oxygen if oxygen saturation below 90 percent or child has severe respiratory distress. Benzylpenicillin 50,000 units per kg IV or IM every 6 hours until improvement then switch to oral amoxicillin. Gentamicin 7.5mg per kg IM or IV once daily if no response to penicillin after 48 hours.
+
+DIARRHOEA ASSESSMENT IN CHILDREN
+Duration: how many days. Blood in stool: bloody diarrhoea is dysentery — treat with ciprofloxacin. Dehydration signs: look for general condition — is child lethargic or unconscious, restless and irritable, or alert. Sunken eyes. Skin pinch — goes back very slowly more than 2 seconds indicates severe dehydration. Drinks poorly or unable to drink indicates severe dehydration. Drinks eagerly and thirsty indicates some dehydration.
+
+DIARRHOEA WITH SEVERE DEHYDRATION
+Give IV fluids immediately. Ringer lactate solution. Children under 5: 100ml per kg — give 30ml per kg in first 30 minutes, then 70ml per kg over next 2.5 hours. Reassess every 15-30 minutes. If IV not possible give ORS by nasogastric tube at 20ml per kg per hour for 6 hours. If no NG tube give ORS by mouth — encourage to drink. Reassess dehydration status after each phase of treatment.
+
+DIARRHOEA WITH SOME DEHYDRATION
+Give ORS in clinic for 4 hours — 75ml per kg over 4 hours. If child vomits wait 10 minutes then continue more slowly. After 4 hours reassess dehydration. If some dehydration persists continue ORS. If no dehydration go to plan A. If severe dehydration develop give IV fluids.
+
+DIARRHOEA WITHOUT DEHYDRATION — PLAN A
+Give extra fluids at home. Recommended fluids: ORS, clean water, rice water, yoghurt drinks, vegetable soup with salt. Give as much as child wants after each loose stool. Amount after each stool: children under 2 years 50 to 100ml, children 2 years and older 100 to 200ml. Give zinc: children under 6 months 10mg daily for 14 days, children 6 months and over 20mg daily for 14 days. Continue feeding.
+
+FEVER ASSESSMENT IN CHILDREN
+Measure temperature. High fever 39 degrees or above. Check for stiff neck — sign of meningitis. Check for rash. Check for malaria risk based on local epidemiology. Any child with fever in malaria area — do rapid diagnostic test if available. If positive treat for malaria. If negative look for another cause.
+
+FEVER MANAGEMENT
+Give paracetamol 15mg per kg every 4 to 6 hours if temperature above 38.5 degrees. Do not give aspirin to children. Do not over-wrap febrile child. Tepid sponging with lukewarm water if child very uncomfortable. Ensure adequate fluid intake. Refer if fever with stiff neck, fever with rash and bleeding, fever with severe illness signs.
+
+MALARIA TREATMENT — UNCOMPLICATED
+Use first-line treatment per national protocol. Artemether-lumefantrine is common first-line: give with food, two doses daily for 3 days. Ensure full course completed. Return if symptoms not improving after 24 hours or worsen at any time.
+
+SEVERE MALARIA IN CHILDREN
+Danger signs: unable to drink, convulsions, very weak, deeply jaundiced, breathing difficulty. Give artesunate IV or IM — 3mg per kg for children under 20kg, 2.4mg per kg for children over 20kg. Give at 0 hours, 12 hours, 24 hours, then daily until able to take oral treatment. If artesunate not available give artemether IM or quinine IV.
+
+MALNUTRITION ASSESSMENT
+Measure mid-upper arm circumference MUAC: green 12.5cm and above, yellow 11.5 to 12.4cm, red below 11.5cm. Check for bilateral pitting oedema — press both feet firmly for 3 seconds, if pit remains oedema is present. Children with MUAC below 11.5cm or oedema have severe acute malnutrition.
+
+SEVERE ACUTE MALNUTRITION MANAGEMENT
+Phase 1 — stabilisation days 1 to 7: treat infections, correct electrolytes, begin cautious feeding with F-75 therapeutic milk. F-75 provides 75kcal per 100ml and low sodium. Do not use F-100 or high energy foods in first 48 hours — refeeding syndrome risk. Give amoxicillin 50mg per kg per day in 2 doses for 7 days. Treat malaria if positive. Give folic acid 5mg on day 1, then 1mg daily. Vitamin A 50,000 IU under 6 months, 100,000 IU 6 to 11 months, 200,000 IU over 12 months on day 1.
+
+SEVERE ACUTE MALNUTRITION — TRANSITION AND REHABILITATION
+Phase 2 — rehabilitation weeks 2 to 6: switch to F-100 at 100ml per kg per day, increase by 10ml per kg every 12 hours if tolerated. Add ready-to-use therapeutic food when appetite returns. Discharge criteria: no oedema for 2 weeks, MUAC above 11.5cm or weight-for-height above minus 2 Z-score, completing all medications, caregiver able to prepare therapeutic food.
+
+NEONATAL SEPSIS RECOGNITION
+Neonatal danger signs in first 28 days: not feeding well, convulsions, fast breathing over 60 per minute, severe chest indrawing, temperature over 37.5 or below 35.5 degrees, umbilical redness or discharge, jaundice below umbilicus or appearing before 24 hours. Any of these signs requires urgent referral and treatment.
+
+NEONATAL SEPSIS TREATMENT
+Ampicillin 100mg per kg twice daily plus gentamicin 7.5mg per kg once daily for 7 days minimum. If meningitis suspected increase ampicillin to every 6 hours and extend treatment to 21 days. Keep warm, support feeding, monitor glucose. Low blood glucose below 2.5mmol per litre — give 2ml per kg of 10% dextrose IV over 5 minutes then 6 to 8mg per kg per minute infusion.
+
+FEBRILE CONVULSIONS MANAGEMENT
+During seizure: place child on side to protect airway, do not restrain, do not put anything in mouth, time the seizure. If seizure lasts more than 5 minutes give diazepam: rectal 0.5mg per kg or IV 0.3mg per kg slowly. Repeat once after 10 minutes if still seizing. After seizure: position on side, assess airway, give paracetamol if febrile. Refer all first febrile seizures, seizures over 15 minutes, or focal seizures.
+
+BURNS IN CHILDREN
+Children are at higher risk than adults due to thinner skin and larger surface area relative to body weight. Cool burn with clean running water at room temperature for 20 minutes — do not use ice, butter, or toothpaste. Estimate burn surface area using rule of nines modified for children: head 18% in infant decreasing to 9% at age 15, each leg 14% in infant increasing to 18% at age 15. Burns over 10% surface area in children or any full-thickness burn requires referral.
+
+CHILD ABUSE RECOGNITION
+Physical abuse indicators: injuries inconsistent with developmental stage, multiple bruises in different stages of healing, burns with clear demarcation lines, injuries in unusual locations such as trunk back buttocks. Sexual abuse indicators: genital or anal injury, age-inappropriate sexual knowledge or behaviour. If child abuse suspected document injuries carefully, do not confront caregiver in presence of child, ensure child safety before discharge.
+
+ADOLESCENT SPECIFIC CONDITIONS
+Pregnancy complications: any adolescent girl with abdominal pain, bleeding, or unconsciousness — consider ectopic pregnancy as an emergency. Mental health: self-harm, suicidal ideation — do not leave alone, involve family if safe, refer for mental health support. Substance use: altered consciousness with substance use — manage airway, lateral position, monitor closely.
+
+IMMUNISATION IN EMERGENCIES
+Continue routine immunisation where possible — measles vaccination is priority in displacement settings. Measles vaccination: one dose to all children 6 months to 15 years who have not been vaccinated or whose status is unknown. Do not withhold vaccination due to mild illness or mild malnutrition. Oral polio vaccine: give two drops by mouth. No injection site needed. Can be given with other vaccines.
+
+GROWTH MONITORING
+Weight: weigh child on calibrated scale, compare to age and sex reference. A child who is losing weight or not gaining weight needs nutritional assessment. Height or length: measure children under 2 years lying down, children over 2 years standing. Weight for height below minus 2 Z-score is moderate wasting, below minus 3 is severe wasting.
+
+REFERRAL COMMUNICATION
+When referring a child always: write referral note with vital signs, diagnosis, treatment given and time, reason for referral. Explain to caregiver where to go and what to expect. Ensure caregiver has transport and can access facility. Pre-alert receiving facility if possible. If transfer is delayed reassess frequently and document.
+
+COMMUNITY HEALTH WORKER SCOPE
+Community health workers can: assess and classify illness using IMCI guidelines, treat uncomplicated malaria, pneumonia, diarrhoea in children, identify danger signs requiring referral, support breastfeeding and nutrition counselling, track and report disease outbreaks. Community health workers must not: perform procedures requiring sterile technique, prescribe medications outside defined protocols, manage severe illness without medical supervision.
