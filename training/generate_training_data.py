@@ -1,1026 +1,226 @@
 """
 generate_training_data.py
-Writes real, medically accurate training pairs to training/data/training_data.jsonl.
-Run: python3 training/generate_training_data.py
-Replaces the useless scaffold output from format_data.py.
+Generates BEACON training pairs from actual corpus chunks using
+Gemma 4 27B via HuggingFace Inference API.
+
+Usage:
+    export HF_TOKEN=hf_...
+    python3 training/generate_training_data.py
+
+Output: training/data/training_data.jsonl (700 pairs, same schema as before)
 """
+
 import json
+import os
 import random
+import time
 from pathlib import Path
+from huggingface_hub import InferenceClient
 
-random.seed(42)
+HF_TOKEN = os.environ.get("HF_TOKEN")
+MODEL    = "google/gemma-4-27b-it"
+TARGET   = 700
+BASE_CAP = 350   # stop collecting base pairs once we hit this (augment the rest)
 
-def pair(instruction, urgency, summary, containment, actions, do_not, escalate, confidence, source):
-    output = {
-        "urgency": urgency,
-        "situation_summary": summary,
-        "containment_check": containment,
-        "immediate_actions": actions,
-        "do_not": do_not,
-        "escalate_if": escalate,
-        "confidence": confidence,
-        "source": source,
-    }
-    return {"instruction": instruction, "output": json.dumps(output)}
+SYSTEM_PROMPT = """You are a medical training data generator for BEACON — an AI emergency guidance system for community first responders in low-resource settings.
 
+Given a protocol chunk from a humanitarian health document, generate realistic field emergency scenarios a community health worker might face, along with structured guidance responses.
 
-PAIRS = [
+Each response MUST be valid JSON matching this schema exactly:
+{
+  "urgency": "IMMEDIATE" | "URGENT" | "ROUTINE",
+  "situation_summary": "<one sentence clinical description — never name specific diseases, describe symptoms instead>",
+  "containment_check": "<question to ask about spread to nearby people, or null for trauma cases>",
+  "immediate_actions": ["<specific actionable step>", ...],
+  "do_not": ["<specific thing to avoid>", ...],
+  "escalate_if": ["<warning sign requiring referral>", ...],
+  "confidence": "HIGH" | "MEDIUM" | "LOW",
+  "source": "<document name and section from the chunk>"
+}
 
-# ════════════════════════════════════════════════════════════════════
-# WATERBORNE ILLNESS / OUTBREAK  (80 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Nina familia — mama na watoto wanne — wana kuhara sana na kutapika. Wamekuwa hivi siku mbili.",
-    "IMMEDIATE",
-    "Symptoms consistent with severe diarrhea and vomiting for two days in a family unit including young children.",
-    "Ask: Do all affected individuals share the same water source? How many other families in the area have similar symptoms?",
-    ["Start oral rehydration immediately: 1 litre boiled or treated water + 6 level teaspoons sugar + half level teaspoon salt",
-     "Children under 5 treated first — give 100ml ORS after each loose stool",
-     "Children 2–10 years: 150ml ORS after each loose stool",
-     "Isolate household from shared water sources until water safety is confirmed",
-     "Monitor for severe dehydration: sunken eyes, no urine, inability to drink, loss of consciousness"],
-    ["Do not use untreated or unboiled water to prepare ORS",
-     "Do not give anti-diarrheal medication without medical guidance",
-     "Do not delay ORS while waiting for a medical team"],
-    ["Child cannot drink or becomes unconscious — IV fluids needed urgently",
-     "Vomiting continues for more than 30 minutes after starting ORS",
-     "Blood appears in stool",
-     "Five or more families in the same area report identical symptoms"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2 — WASH/Diarrheal Disease Management"
-),
-pair(
-    "Family — mother and four children — severe diarrhea and vomiting for two days. No clean water available.",
-    "IMMEDIATE",
-    "Symptoms consistent with severe acute diarrhea and vomiting with dehydration risk across a family unit.",
-    "Ask: Are other families in this camp experiencing the same symptoms? Do they all draw from the same water point?",
-    ["Prepare ORS: 1 litre boiled water + 6 level teaspoons sugar + half teaspoon salt",
-     "Children under 5 treated first — highest mortality risk from dehydration",
-     "Assess dehydration: check skin pinch, sunken eyes, consciousness level",
-     "Continue breastfeeding — do not stop for infants"],
-    ["Do not give anti-diarrheal medication to children",
-     "Do not use floodwater or untreated water for ORS"],
-    ["Any child unable to drink or unconscious — IV rehydration needed immediately",
-     "Spread confirmed to other households"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; IMCI Diarrhea Management Protocol"
-),
-pair(
-    "47 people in a displacement camp have sudden watery diarrhea and vomiting. They share one water point.",
-    "IMMEDIATE",
-    "Symptoms consistent with acute watery illness affecting multiple individuals sharing a common water source — potential outbreak.",
-    "Ask: When did the first case appear? Are all affected people using the same water point? Have there been any deaths?",
-    ["Establish ORT corner at health post immediately",
-     "Close and disinfect the shared water point pending water quality testing",
-     "Distribute ORS — estimate 5–10 packets per case",
-     "Prioritize children under 5 and unconscious patients for IV rehydration",
-     "Dedicate a latrine for affected patients",
-     "Report to district health officer within 24 hours",
-     "Chlorinate all remaining water storage containers at 0.5%"],
-    ["Do not name the disease — describe as severe diarrhea requiring treatment",
-     "Do not allow anyone to use the implicated water source",
-     "Do not delay reporting to health authority"],
-    ["Case fatalities — escalate to emergency level immediately",
-     "IV fluid stock exhausted with active severe cases",
-     "Spread beyond current camp section"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; Outbreak Containment Protocol"
-),
-pair(
-    "Child age 2, diarrhea for 3 days, sunken eyes, unable to drink.",
-    "IMMEDIATE",
-    "Symptoms consistent with severe dehydration in a child under 5 — life-threatening without immediate IV rehydration.",
-    "Ask: Are other children in the household or camp showing the same symptoms? Shared water source?",
-    ["This is a medical emergency — evacuate to nearest facility with IV fluids immediately",
-     "If evacuation delayed: try small sips of ORS by spoon every 2–3 minutes",
-     "Keep child horizontal and do not leave unattended",
-     "Monitor breathing and consciousness continuously"],
-    ["Do not force large volumes orally if child is lethargic — aspiration risk",
-     "Do not delay evacuation waiting for improvement"],
-    ["Child loses consciousness",
-     "Breathing becomes rapid or labored",
-     "Child cannot swallow even small sips"],
-    "HIGH",
-    "IMCI Emergency Triage — Severe Dehydration in Children under 5"
-),
-pair(
-    "Single adult, diarrhea 2 days, mild dehydration, alert, drinking water.",
-    "ROUTINE",
-    "Symptoms consistent with mild acute diarrhea with some dehydration in an alert adult who can drink.",
-    "Ask: Are other people in the household showing the same symptoms? Shared water source?",
-    ["Start ORS: 1 litre boiled water + 6 teaspoons sugar + half teaspoon salt",
-     "Encourage 200ml after each loose stool",
-     "Continue food — soft, easy-to-digest foods",
-     "Reassess in 4 hours"],
-    ["Do not restrict fluid intake",
-     "Do not give anti-diarrheal medication without medical guidance"],
-    ["Condition worsens — signs of severe dehydration appear",
-     "Blood in stool",
-     "Other household members develop same symptoms"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2"
-),
-pair(
-    "200 people in a camp, many vomiting and diarrhea since yesterday. Water truck came two days ago.",
-    "IMMEDIATE",
-    "Symptoms consistent with acute gastrointestinal illness affecting a large proportion of camp population, likely linked to water supply.",
-    "Ask: Did everyone get water from the same truck? Is this the only water source? When exactly did symptoms start relative to water distribution?",
-    ["Suspend use of water from the implicated truck immediately",
-     "Activate outbreak response — notify district health officer",
-     "Set up ORT corner, triage all cases by dehydration severity",
-     "Chlorinate all water storage containers at 0.5%",
-     "Register all cases with date, time, water source exposure",
-     "Request emergency water trucking from alternative source"],
-    ["Do not restart water distribution from implicated source until tested and cleared",
-     "Do not give anti-motility drugs without medical oversight"],
-    ["Deaths in the camp",
-     "More than 10% of population severely dehydrated within 24 hours",
-     "Children under 5 unable to drink"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; UNHCR Outbreak Response Field Guide"
-),
-pair(
-    "Yara biyu suna da gudawa da amai tun jiya. Suna kusa da rijiyar da ambaliyar ta shafa.",
-    "IMMEDIATE",
-    "Symptoms consistent with acute diarrhea and vomiting in children near a flood-affected water source.",
-    "Ask: Are other children or adults in the area showing the same symptoms? Do they all use the same well?",
-    ["Start oral rehydration: 1 litre boiled water + 6 level teaspoons sugar + half teaspoon salt",
-     "Give 100–150ml ORS after each loose stool depending on child age",
-     "Stop use of the well until water can be tested or treated",
-     "Continue breastfeeding for infants"],
-    ["Do not use untreated well water",
-     "Do not give anti-diarrheal tablets to children without medical guidance"],
-    ["Child cannot drink or becomes unconscious",
-     "Symptoms spread to additional households",
-     "Blood in stool"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; IMCI Diarrhea in Children"
-),
-pair(
-    "परिवार में माँ और चार बच्चे — दो दिनों से तेज दस्त और उल्टी। पास में नदी है।",
-    "IMMEDIATE",
-    "Symptoms consistent with severe diarrhea and vomiting for two days in a family unit near a water source.",
-    "Ask: क्या आस-पास के परिवारों में भी यही लक्षण हैं? क्या वे एक ही पानी के स्रोत का उपयोग करते हैं?",
-    ["तुरंत ORS शुरू करें: 1 लीटर उबला पानी + 6 चम्मच चीनी + आधा चम्मच नमक",
-     "5 साल से कम बच्चों को पहले उपचार दें",
-     "नदी के पानी का उपयोग बंद करें",
-     "हर दस्त के बाद 100–150ml ORS दें"],
-    ["बिना उबाले पानी से ORS न बनाएं",
-     "बच्चों को दस्त-रोक दवा न दें"],
-    ["बच्चा पी नहीं सकता या बेहोश है — IV की जरूरत है",
-     "मल में खून आए",
-     "अन्य परिवारों में भी फैले"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; IMCI"
-),
-pair(
-    "Outbreak worsening — 12 new diarrhea cases in 6 hours. ORS supply almost exhausted.",
-    "IMMEDIATE",
-    "Acute watery illness outbreak accelerating with critical supply shortage.",
-    "Ask: Are new cases from same households or spreading to new households? Is there a central water source all affected people are using?",
-    ["Send emergency resupply request immediately — ORS packets and IV fluids",
-     "Ration ORS to children under 5 and severe cases first",
-     "Prepare homemade ORS if packets exhausted: 1L boiled water + 6 tsp sugar + 0.5 tsp salt",
-     "IV rehydration for unconscious or unable-to-drink patients",
-     "Restrict all shared water sources",
-     "Escalate to national level if spread continues"],
-    ["Do not send patients home without ORS supply",
-     "Do not close ORT corner while active cases remain"],
-    ["Fatalities — escalate immediately",
-     "IV fluid stock at zero with active severe dehydration cases",
-     "Spread to new camp sections"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; UNHCR Emergency Supply Protocol"
-),
-pair(
-    "Adults with rice-water diarrhea, sudden onset this morning. Camp flooded last week.",
-    "IMMEDIATE",
-    "Symptoms consistent with sudden profuse watery diarrhea in multiple adults near a flood-affected water source.",
-    "Ask: How many people affected? Are others in camp showing the same symptoms today? Is the flood source the community water supply?",
-    ["Isolate affected individuals — dedicated latrine",
-     "Start IV Ringer Lactate for patients showing signs of severe dehydration",
-     "ORS for mild-moderate cases: 1L boiled water + 6 tsp sugar + 0.5 tsp salt",
-     "Disinfect environment with 0.5% chlorine solution",
-     "Report to district health officer",
-     "Do not allow use of flood water"],
-    ["Do not name the disease to avoid panic",
-     "Do not use river water even after boiling until tested"],
-    ["Rapid deterioration in any patient within 1 hour",
-     "More than 10 cases within 24 hours",
-     "Severe dehydration with no IV fluids on site"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; Post-Flood Health Risk Management"
-),
-pair(
-    "5 people with vomiting after shared meal at community gathering. Started 4 hours after eating.",
-    "URGENT",
-    "Symptoms consistent with acute gastrointestinal illness in multiple individuals following a shared meal — possible food contamination.",
-    "Ask: How many attended the meal? Are all sick or only some? What food was served and how was it stored?",
-    ["Register all affected individuals and what they ate",
-     "Start ORS for all symptomatic individuals",
-     "Do not serve food from the same source until investigated",
-     "Notify health authority — potential food-borne illness event"],
-    ["Do not administer antibiotics without clinical assessment",
-     "Do not discard implicated food before health authority collects samples"],
-    ["Patients deteriorating rapidly or showing blood in stool",
-     "Pregnant women, elderly, or children under 5 affected — higher risk",
-     "Cases keep appearing 24 hours after meal — secondary transmission"],
-    "MEDIUM",
-    "WHO SPHERE Handbook §3.2; Food Safety in Emergencies"
-),
-pair(
-    "Camp of 500 people. Diarrhea outbreak starting. How many ORS packets do I need?",
-    "URGENT",
-    "ORS supply calculation for a diarrhea outbreak — critical to prevent dehydration deaths.",
-    "Ask: How many people currently symptomatic? Is the case count growing? What is current stock on hand?",
-    ["Estimate: 10% of population develops diarrhea in active outbreak = 50 expected cases",
-     "Each case needs 5–10 ORS packets = 250–500 packets for the first week",
-     "Add 20% buffer = 300–600 packets minimum",
-     "Prepare homemade ORS recipe as backup: 1L boiled water + 6 tsp sugar + 0.5 tsp salt",
-     "Request resupply now — do not wait until stock is exhausted"],
-    ["Do not ration ORS below therapeutic dose for active cases",
-     "Do not use expired ORS packets"],
-    ["ORS stock below 2-day supply with active outbreak — immediate resupply emergency",
-     "IV fluid requirement exceeds supply — escalate"],
-    "HIGH",
-    "WHO SPHERE Handbook; ORS Stock Calculation Guidelines"
-),
-pair(
-    "Bloody diarrhea in a child age 4. Two days. Moderate dehydration.",
-    "URGENT",
-    "Symptoms consistent with bloody diarrhea in a child — bacterial bowel infection requiring antibiotic treatment alongside ORS.",
-    "Ask: Has anyone else in the household had similar symptoms? Shared water or food source?",
-    ["Start ORS immediately for dehydration: 1L boiled water + 6 tsp sugar + 0.5 tsp salt — 150ml after each stool",
-     "Treat for bacterial bowel infection: ciprofloxacin if available per local protocol",
-     "Do not give anti-diarrheal medication — delays clearance of infection",
-     "Monitor dehydration closely — may worsen rapidly in children",
-     "Refer to health facility for antibiotic prescription"],
-    ["Do not give anti-motility drugs such as loperamide to children",
-     "Do not withhold ORS waiting for antibiotics"],
-    ["Child deteriorates to severe dehydration",
-     "Child unable to drink",
-     "High fever develops",
-     "Blood in stool increases"],
-    "HIGH",
-    "IMCI Diarrhea Protocol — Bloody Diarrhea/Dysentery"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# TRIAGE / TRAUMA  (80 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Person found unconscious after building collapse. Not responding to voice.",
-    "IMMEDIATE",
-    "Unresponsive patient after traumatic event — potential severe head injury, internal injury, or shock.",
-    None,
-    ["Check airway — jaw thrust if spinal injury suspected, do NOT head-tilt",
-     "Check breathing — look, listen, feel 10 seconds",
-     "No breathing: begin CPR — 30 compressions, 2 rescue breaths",
-     "Control visible severe bleeding with direct pressure",
-     "Spinal precautions — do not move without alignment maintained",
-     "Call for evacuation to surgical facility immediately"],
-    ["Do not give anything by mouth — aspiration risk",
-     "Do not leave patient unattended",
-     "Do not remove impaled objects",
-     "Do not flex or rotate the neck"],
-    ["No pulse or breathing — continue CPR",
-     "Pupils unequal or non-reactive",
-     "Active uncontrolled bleeding"],
-    "HIGH",
-    "WHO Emergency Triage — Immediate Category; Trauma Protocol"
-),
-pair(
-    "Severe bleeding from leg — machete injury. Cannot stop with direct pressure.",
-    "IMMEDIATE",
-    "Life-threatening hemorrhage from extremity wound unresponsive to direct pressure.",
-    None,
-    ["Apply tourniquet 5–7cm above wound — tighten until bleeding stops",
-     "Note time of application — critical for surgical team",
-     "Do NOT remove tourniquet once applied",
-     "Lay patient flat, legs elevated if no spinal injury",
-     "Monitor for shock: rapid weak pulse, cold clammy skin, confusion",
-     "Evacuate to surgical facility immediately"],
-    ["Do not remove tourniquet",
-     "Do not give oral fluids if patient is in shock",
-     "Do not apply tourniquet over a joint"],
-    ["Signs of shock develop",
-     "Additional wound identified",
-     "Patient loses consciousness"],
-    "HIGH",
-    "WHO Emergency Triage; Haemorrhage Control Protocol"
-),
-pair(
-    "Crush injury to lower leg after wall collapse. Conscious, in pain, leg deformed.",
-    "URGENT",
-    "Crush injury with suspected fracture and possible vascular compromise — immobilization and urgent evacuation needed.",
-    None,
-    ["Assess distal pulse, sensation, and movement below the injury before touching",
-     "Immobilize in position found — improvised splint using boards or rolled clothing",
-     "Cover open wounds with clean moist dressing",
-     "Do not attempt to straighten the deformed limb",
-     "Elevate limb slightly if no spinal injury suspected",
-     "Monitor for shock continuously",
-     "Arrange urgent evacuation to surgical facility"],
-    ["Do not push visible bone ends back",
-     "Do not apply tourniquet unless there is life-threatening uncontrolled bleeding",
-     "Do not give morphine without medical guidance — masks deterioration"],
-    ["Distal pulse disappears — vascular compromise emergency",
-     "Signs of shock develop",
-     "Patient has been crushed for more than 15 minutes — crush syndrome risk on release"],
-    "HIGH",
-    "WHO Trauma Protocol; Open Fracture Management"
-),
-pair(
-    "Burns on arms and chest from cooking fire. Adult, conscious. Approximately 20% of body.",
-    "URGENT",
-    "Moderate-to-severe burns covering approximately 20% body surface area — dehydration and infection risk.",
-    None,
-    ["Remove clothing and jewelry from burned area",
-     "Cool burn with clean running water at room temperature for 20 minutes",
-     "Cover with clean non-fluffy material",
-     "Start IV Ringer Lactate: 4ml × kg body weight × % BSA burned — half in first 8 hours",
-     "Arrange evacuation to burn facility"],
-    ["Do not use ice — causes vasoconstriction and worsens injury",
-     "Do not apply butter, toothpaste, or oils",
-     "Do not pop blisters"],
-    ["Burns involve face, airway, hands, or genitals — higher priority",
-     "Patient develops breathing difficulty — airway burn suspected",
-     "Signs of shock"],
-    "HIGH",
-    "WHO Emergency Burns Management; Parkland Formula"
-),
-pair(
-    "Woman, 8 months pregnant, collapsed and unresponsive. No visible injuries.",
-    "IMMEDIATE",
-    "Unconscious pregnant woman — obstetric emergency with multiple possible causes including eclampsia or hemorrhage.",
-    None,
-    ["Place on her LEFT side — prevents compression of major blood vessels by uterus",
-     "Check airway and breathing",
-     "Check for vaginal bleeding",
-     "Evacuate to obstetric facility with surgical capability IMMEDIATELY"],
-    ["Do not place flat on back — aortocaval compression risk in late pregnancy",
-     "Do not delay evacuation for further assessment on scene"],
-    ["Seizure activity begins — eclampsia",
-     "Heavy vaginal bleeding",
-     "No response to airway maneuvers"],
-    "HIGH",
-    "IMCI Obstetric Emergency Protocol; WHO Emergency Obstetric Care"
-),
-pair(
-    "Suspected spinal injury after fall from roof. Conscious, cannot feel or move legs.",
-    "IMMEDIATE",
-    "Suspected spinal cord injury with neurological deficit — movement must be prevented to avoid further cord damage.",
-    None,
-    ["Do not move patient — immobilize in position found",
-     "Maintain cervical spine alignment — do not allow neck to flex or rotate",
-     "Log roll with minimum 3 people if movement is essential",
-     "Airway: jaw thrust only — no head-tilt chin-lift",
-     "Monitor breathing — high cervical injury can affect respiratory muscles",
-     "Urgent evacuation maintaining spinal precautions throughout"],
-    ["Do not flex, extend, or rotate the neck",
-     "Do not allow patient to sit or stand",
-     "Do not remove helmet if wearing one"],
-    ["Breathing becomes labored",
-     "Loss of consciousness",
-     "Patient develops shock"],
-    "HIGH",
-    "WHO Trauma Protocol; Spinal Injury Precautions"
-),
-pair(
-    "15 casualties from earthquake. 3 trained responders, limited supplies.",
-    "IMMEDIATE",
-    "Mass casualty incident — triage required to allocate limited resources to patients with survivable injuries.",
-    None,
-    ["START triage immediately: Immediate (Red), Delayed (Yellow), Minor (Green), Expectant (Black)",
-     "Immediate/Red: airway problem, uncontrolled bleeding, unconscious but responsive",
-     "Delayed/Yellow: fractures, moderate injuries — stable for 30–60 minutes",
-     "Minor/Green: walking wounded — direct to self-care area",
-     "Expectant/Black: unsurvivable with available resources",
-     "Send most critical cases to surgical facility first",
-     "Call for additional medical teams immediately"],
-    ["Do not spend excessive time on any single patient during initial triage",
-     "Do not categorize Expectant without periodic reassessment as resources change"],
-    ["Resources exhausted before all Immediate patients treated",
-     "Secondary structural collapse — evacuate responders",
-     "Surge of new casualties"],
-    "HIGH",
-    "WHO Emergency Triage; START Mass Casualty Protocol"
-),
-pair(
-    "Head wound — patient GCS was 14, now 10. Restless. Pupils unequal.",
-    "IMMEDIATE",
-    "Deteriorating consciousness with unequal pupils after head injury — signs of rising intracranial pressure.",
-    None,
-    ["This is a neurosurgical emergency — evacuate immediately",
-     "Protect airway — recovery position if breathing",
-     "Elevate head of stretcher 30° if possible",
-     "Monitor GCS and pupils every 5 minutes during transport",
-     "Record GCS at time of assessment for the receiving team"],
-    ["Do not give morphine — masks neurological decline",
-     "Do not delay evacuation",
-     "Do not leave patient unattended"],
-    ["GCS drops below 8 — needs airway protection",
-     "Breathing becomes irregular",
-     "Patient becomes completely unresponsive"],
-    "HIGH",
-    "WHO Trauma Protocol; Head Injury Monitoring — Glasgow Coma Scale"
-),
-pair(
-    "Mtu amepigwa kisu tumboni. Ana maumivu makali, damu kidogo nje.",
-    "IMMEDIATE",
-    "Penetrating abdominal wound — high risk of internal bleeding even with minimal external bleeding.",
-    None,
-    ["Do not remove the knife — stabilize in place with padding around it",
-     "Lay patient flat and monitor breathing and pulse continuously",
-     "Cover wound with clean dressing — no pressure over impaled object",
-     "Monitor for shock: rapid weak pulse, pale cold skin, confusion",
-     "Evacuate immediately to surgical facility"],
-    ["Do not remove impaled objects",
-     "Do not give anything by mouth",
-     "Do not apply heavy pressure over the wound"],
-    ["Signs of shock develop",
-     "Abdomen becomes rigid or distended",
-     "Patient loses consciousness"],
-    "HIGH",
-    "WHO Trauma Protocol; Penetrating Abdominal Wound Management"
-),
-pair(
-    "Person choking — food stuck, cannot speak or cough, turning blue.",
-    "IMMEDIATE",
-    "Complete airway obstruction — life-threatening, requires immediate physical intervention.",
-    None,
-    ["Adult: 5 firm back blows between shoulder blades with heel of hand",
-     "Then 5 abdominal thrusts — push in and up firmly below ribcage",
-     "Alternate 5 back blows and 5 abdominal thrusts until object expelled or person unconscious",
-     "If unconscious: start CPR and look in mouth before each rescue breath — remove object only if visible"],
-    ["Do not perform blind finger sweeps in the mouth",
-     "Do not give abdominal thrusts if victim is pregnant — use chest thrusts instead"],
-    ["Person loses consciousness — start CPR",
-     "Object cannot be cleared after multiple cycles — emergency evacuation"],
-    "HIGH",
-    "Red Cross First Aid — Choking in Adults"
-),
-pair(
-    "Adult with minor cut on forehead, alert, walking, no other injuries.",
-    "ROUTINE",
-    "Minor laceration in a conscious alert patient with no signs of significant injury.",
-    None,
-    ["Irrigate wound with clean water under pressure for 5 minutes",
-     "Apply direct pressure with clean cloth for 10 minutes",
-     "Close with steri-strips or butterfly strips if wound edges can be held together",
-     "Apply clean dressing",
-     "Reassess in 24 hours for infection signs"],
-    ["Do not close contaminated wounds primarily — delayed closure at 48–72 hours",
-     "Do not apply adhesive dressing that prevents wound inspection"],
-    ["Signs of infection: increasing pain, warmth, swelling, discharge",
-     "Patient reports headache, confusion, or vision changes — reassess for head injury",
-     "Bone visible in wound — surgical care required"],
-    "HIGH",
-    "WHO Trauma Protocol; Wound Closure Guidelines"
-),
-pair(
-    "Infant not breathing after choking. Turned blue.",
-    "IMMEDIATE",
-    "Airway obstruction in an infant — complete obstruction causing cyanosis, requires immediate intervention.",
-    None,
-    ["Hold infant face-down along forearm, support head",
-     "5 firm back blows between shoulder blades with heel of hand",
-     "Turn infant face-up — 5 chest thrusts with 2 fingers on breastbone below nipple line",
-     "Look in mouth after each cycle — remove object only if clearly visible",
-     "If infant unconscious: start infant CPR — 30 compressions then 2 breaths covering nose and mouth",
-     "Continue until object expelled, infant breathes, or emergency care arrives"],
-    ["Do not perform blind finger sweeps",
-     "Do not give abdominal thrusts to infants under 1 year",
-     "Do not shake the infant"],
-    ["Infant does not resume breathing after object cleared — continue CPR",
-     "Object cannot be cleared — evacuate immediately while continuing CPR"],
-    "HIGH",
-    "Red Cross First Aid — Infant Choking and CPR"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# PEDIATRIC  (80 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Child age 3, convulsing. High fever. First seizure ever.",
-    "IMMEDIATE",
-    "Active seizure with fever in a young child — febrile convulsion requiring airway protection and timing.",
-    None,
-    ["Place child on side — recovery position to protect airway",
-     "Clear hard objects nearby — do not restrain",
-     "Time the seizure from start",
-     "Do NOT insert anything in mouth",
-     "If seizure > 5 minutes: give rectal diazepam 0.5mg/kg if available",
-     "After seizure stops: give paracetamol 15mg/kg for fever",
-     "Refer — first seizure always requires assessment"],
-    ["Do not restrain the child during the seizure",
-     "Do not insert anything in the mouth",
-     "Do not give oral medication during active seizure"],
-    ["Seizure lasts more than 5 minutes",
-     "Child does not regain consciousness after seizure stops",
-     "Focal features — only one side of body affected",
-     "Seizure recurs within 24 hours"],
-    "HIGH",
-    "IMCI Emergency Protocol; Febrile Convulsions Management"
-),
-pair(
-    "Infant 3 months, not feeding since this morning, lethargic, feels warm.",
-    "IMMEDIATE",
-    "Danger signs in a young infant — not feeding and lethargy in infants under 2 months are emergency indicators.",
-    None,
-    ["This age group with these signs is an emergency — do not wait",
-     "Keep infant warm — prevent hypothermia",
-     "Skin-to-skin with mother during transport",
-     "Do not force feed — aspiration risk",
-     "Evacuate to health facility with paediatric care immediately"],
-    ["Do not delay referral waiting for improvement",
-     "Do not give home remedies or traditional medicines"],
-    ["Fast breathing over 60 per minute",
-     "Chest indrawing",
-     "Skin turns yellow or grey",
-     "Convulsions begin"],
-    "HIGH",
-    "IMCI — Neonatal Danger Signs; Young Infant Emergency Protocol"
-),
-pair(
-    "Child 18 months, fast breathing, chest indrawing, fever 38.8°C.",
-    "URGENT",
-    "Severe respiratory distress in a child under 2 — signs consistent with severe lower respiratory illness requiring antibiotic treatment.",
-    None,
-    ["Count breaths for full 60 seconds — fast breathing for this age is over 50 per minute",
-     "Give amoxicillin 40mg/kg per day in 2 doses for 5 days if available",
-     "Give paracetamol 15mg/kg for fever",
-     "Keep child upright — semi-sitting position helps breathing",
-     "Encourage oral fluids, continue breastfeeding",
-     "Refer to facility with oxygen — chest indrawing indicates severity"],
-    ["Do not give cough suppressants to children",
-     "Do not give aspirin to children",
-     "Do not lay flat if breathing is distressed"],
-    ["Child stops breathing or turns blue — emergency",
-     "Cannot be roused",
-     "Unable to drink or feed"],
-    "HIGH",
-    "IMCI Respiratory Illness Protocol; Severe Pneumonia in Children"
-),
-pair(
-    "Child with visible wasting — ribs clearly showing. MUAC 10.8cm. No oedema.",
-    "URGENT",
-    "Severe acute malnutrition — MUAC below 11.5cm indicates SAM requiring therapeutic feeding program, not regular food.",
-    None,
-    ["Do NOT give high-energy food immediately — refeeding syndrome risk",
-     "Refer to inpatient therapeutic feeding program",
-     "F-75 formula in first 48 hours for stabilization",
-     "Treat infections: amoxicillin; treat malaria if RDT positive",
-     "Give vitamin A and folic acid on day 1",
-     "Register in nutrition program; follow CMAM protocol"],
-    ["Do not give high-calorie food in the first 48 hours",
-     "Do not give iron supplements in the acute phase"],
-    ["Child develops hypoglycemia — give glucose or sugar water immediately",
-     "Temperature below 35.5°C — hypothermia",
-     "Bilateral pitting oedema develops",
-     "Child becomes unconscious"],
-    "HIGH",
-    "IMCI SAM Protocol; WHO CMAM Guidelines"
-),
-pair(
-    "Child age 3, choking on food, now unconscious. Not breathing.",
-    "IMMEDIATE",
-    "Complete airway obstruction in a child causing loss of consciousness — CPR and airway clearance required simultaneously.",
-    None,
-    ["Open airway — look in mouth and remove object only if visible",
-     "Attempt 2 rescue breaths — if chest does not rise continue",
-     "Start CPR: 30 chest compressions — push one third of chest depth",
-     "After every 30 compressions check mouth before giving 2 breaths",
-     "Continue until object expelled and child breathes, or emergency care arrives"],
-    ["Do not perform blind finger sweeps",
-     "Do not delay CPR to look for help"],
-    ["Child does not resume breathing after multiple cycles",
-     "Object cannot be cleared — evacuate immediately while continuing CPR"],
-    "HIGH",
-    "IMCI — Airway Obstruction; Paediatric CPR Protocol"
-),
-pair(
-    "Newborn, 2 days old, not feeding, umbilical cord redness and discharge.",
-    "IMMEDIATE",
-    "Neonatal danger signs — umbilical infection combined with not feeding in a 2-day-old indicates possible neonatal sepsis.",
-    None,
-    ["This is a neonatal emergency — evacuate to health facility immediately",
-     "Keep newborn warm — skin-to-skin with mother or wrap in dry cloth",
-     "Do not apply any substance to the umbilical cord — clean and dry only",
-     "Do not delay for any reason"],
-    ["Do not apply traditional substances to umbilical cord",
-     "Do not attempt to treat at home"],
-    ["Any further danger sign appears: fast breathing, convulsions, jaundice, cold skin",
-     "Condition deteriorates during transport"],
-    "HIGH",
-    "IMCI — Neonatal Danger Signs; Possible Neonatal Sepsis"
-),
-pair(
-    "Child age 4, fever 3 days, stiff neck, dislike of bright light.",
-    "IMMEDIATE",
-    "Fever with stiff neck and photophobia in a child — signs consistent with meningitis requiring immediate evacuation.",
-    None,
-    ["This is a medical emergency — evacuate immediately",
-     "Keep child calm and still — minimize stimulation",
-     "Do not attempt lumbar puncture in field setting",
-     "Give first dose of benzylpenicillin 50,000 units/kg IM if available before evacuation",
-     "Monitor breathing and consciousness continuously during transport"],
-    ["Do not delay evacuation for any assessment or treatment on scene",
-     "Do not give food or water — aspiration risk if consciousness declines"],
-    ["Child loses consciousness",
-     "Seizure begins",
-     "Breathing becomes irregular"],
-    "HIGH",
-    "IMCI Emergency Protocol; Suspected Bacterial Meningitis"
-),
-pair(
-    "बच्चा 2 साल, 3 दिन से दस्त, आँखें अंदर धंसी हुई, पानी नहीं पी पा रहा।",
-    "IMMEDIATE",
-    "Symptoms consistent with severe dehydration in a child under 5 — life-threatening without immediate IV rehydration.",
-    "क्या घर में या पास-पड़ोस में और बच्चों को भी ऐसे लक्षण हैं? एक ही पानी का स्रोत?",
-    ["यह चिकित्सा आपातकाल है — तुरंत IV तरल पदार्थ वाली सुविधा में ले जाएं",
-     "यदि देरी हो: चम्मच से हर 2–3 मिनट पर ORS की छोटी मात्रा देने की कोशिश करें",
-     "बच्चे को लेटा कर रखें और अकेला न छोड़ें",
-     "सांस और चेतना की निगरानी करते रहें"],
-    ["यदि बच्चा सुस्त है तो जबरदस्ती बड़ी मात्रा में न दें — श्वास में जाने का खतरा",
-     "सुधार की प्रतीक्षा में निकासी में देरी न करें"],
-    ["बच्चा बेहोश हो जाए",
-     "साँस तेज या कठिन हो जाए",
-     "छोटी घूँट भी नहीं निगल पा रहा"],
-    "HIGH",
-    "IMCI — गंभीर निर्जलीकरण, 5 वर्ष से कम बच्चे"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# FLOOD / ENVIRONMENTAL  (60 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Water source contaminated after flooding. 300 people, no alternative water supply.",
-    "URGENT",
-    "Mass water contamination requiring emergency water treatment and distribution to prevent disease outbreak.",
-    "Ask: Has anyone developed diarrhea or vomiting in the past 24 hours? If yes — begin outbreak response simultaneously.",
-    ["Distribute water purification tablets — follow dosage instructions on packet",
-     "If tablets unavailable: boil water vigorously for 1 minute before any use",
-     "Store treated water in clean covered containers with narrow mouths",
-     "Request emergency water trucking from authority or NGO",
-     "SPHERE minimum standard: 15 litres per person per day",
-     "Do not use floodwater for any purpose without treatment"],
-    ["Do not use river or floodwater even after filtering without chemical treatment",
-     "Do not use containers previously used for chemicals"],
-    ["Diarrhea or vomiting cases appear — activate outbreak response immediately",
-     "Water supply not restored within 24 hours — escalate to emergency level",
-     "Pregnant women or children under 5 showing symptoms"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.1 — Water Supply; Post-Flood Health Risks"
-),
-pair(
-    "Person pulled from floodwater after 20 minutes. Conscious but confused, shivering violently. Wet clothes.",
-    "URGENT",
-    "Mild to moderate hypothermia following cold water immersion — requires careful rewarming and monitoring.",
-    None,
-    ["Remove all wet clothing immediately",
-     "Insulate from ground — place on dry surface",
-     "Wrap in dry blankets, cover head",
-     "Give warm sweet drinks only if fully conscious and able to swallow",
-     "Rewarm core first — do NOT rub extremities",
-     "Monitor consciousness and vital signs continuously"],
-    ["Do not rub extremities — forces cold blood to core and can cause cardiac arrest",
-     "Do not give alcohol",
-     "Do not place in very hot water — shock risk"],
-    ["Shivering stops but patient still confused — moderate hypothermia worsening",
-     "Pulse becomes slow and irregular",
-     "Patient becomes unconscious"],
-    "HIGH",
-    "WHO Emergency Protocol; Hypothermia Management"
-),
-pair(
-    "Evacuating 80 people including elderly, infants, disabled. Rising floodwater. One boat.",
-    "URGENT",
-    "Mass evacuation of vulnerable individuals against active flood threat — prioritized transport required.",
-    None,
-    ["Prioritize: infants, children under 5, pregnant women, non-swimmers, elderly, disabled",
-     "Do not walk in moving water above ankle height — 30cm can knock adults over",
-     "First boat: highest-priority individuals, one capable adult per vulnerable group",
-     "Designate assembly point on high ground",
-     "Count all individuals before and after each crossing",
-     "Send distress signal for additional transport"],
-    ["Do not overload the boat",
-     "Do not allow individuals to swim unless trained and conditions are safe",
-     "Do not attempt crossing in rapidly rising water without safety line"],
-    ["Boat unavailable and water still rising — move to highest available structure and signal for help",
-     "Someone swept by current — throw rope, do not enter water unroped",
-     "Medical condition deteriorates during evacuation"],
-    "HIGH",
-    "WHO SPHERE Handbook; UNHCR Flood Evacuation Protocol"
-),
-pair(
-    "Snake bite on ankle. Person alert. Cannot identify the snake. 4 hours from clinic.",
-    "URGENT",
-    "Snake bite with unknown species — potential envenomation requiring immobilization and urgent evacuation.",
-    None,
-    ["Immobilize bitten limb at heart level",
-     "Remove jewelry and tight clothing near the bite",
-     "Mark swelling edge with pen and time every 15 minutes",
-     "Keep patient calm and still — movement speeds venom absorption",
-     "Begin evacuation to facility with antivenom immediately",
-     "Note snake appearance for treating team if possible without risk"],
-    ["Do not incise or suck the wound",
-     "Do not apply tourniquet",
-     "Do not apply ice",
-     "Do not allow patient to walk if avoidable"],
-    ["Swelling spreading rapidly toward body",
-     "Breathing difficulty develops",
-     "Bleeding from wound or other sites",
-     "Patient loses consciousness"],
-    "HIGH",
-    "WHO Emergency Protocol; Snake Bite Management"
-),
-pair(
-    "Post-flood: standing water everywhere, worried about disease in coming weeks.",
-    "ROUTINE",
-    "Post-flood disease prevention planning for a community at elevated risk from multiple waterborne and vector-borne diseases.",
-    "Ask: Have any community members shown symptoms of diarrhea, fever, or rash in the past 48 hours? If yes — investigate immediately.",
-    ["Treat all drinking water — boil or use chlorine tablets",
-     "Clear standing water near shelters — mosquito-borne disease risk peaks 2–3 weeks after flooding",
-     "Discard all food that contacted floodwater",
-     "Clean food contact surfaces with 0.5% chlorine solution",
-     "Report animal deaths to health authority — leptospirosis risk",
-     "Distribute insecticide-treated bed nets if available"],
-    ["Do not use floodwater for any household purpose without treatment",
-     "Do not ignore dead animals near water sources"],
-    ["Cases of fever, rash, or diarrhea begin appearing — activate disease surveillance",
-     "Human death possibly linked to waterborne or vector illness — escalate to health authority"],
-    "MEDIUM",
-    "WHO SPHERE Handbook; Post-Flood Health Risk Management"
-),
-pair(
-    "Heatstroke — adult found collapsed in sun, skin hot and dry, confused.",
-    "IMMEDIATE",
-    "Heatstroke — life-threatening emergency with core temperature likely above 40°C requiring immediate cooling.",
-    None,
-    ["Move to shade or coolest available environment immediately",
-     "Cool rapidly by any means: wet sheets, fanning, cold water sponging, ice packs to neck armpits groin",
-     "Call for emergency care immediately",
-     "Do not give fluids if altered consciousness — aspiration risk",
-     "Target temperature reduction below 39°C within 30 minutes"],
-    ["Do not give fluids by mouth if consciousness is impaired",
-     "Do not delay cooling while waiting for evacuation — start immediately"],
-    ["Patient becomes unconscious",
-     "Seizures begin",
-     "Cooling not achieved within 30 minutes"],
-    "HIGH",
-    "Red Cross First Aid — Heatstroke Management"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# RESOURCE CALCULATION  (40 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "One first aid kit, 12 injured people from earthquake. Fractures, cuts, one unconscious.",
-    "IMMEDIATE",
-    "Mass casualty resource allocation — limited supplies must be prioritized to maximize survivable outcomes.",
-    None,
-    ["Triage first before opening kit — allocate to Immediate (Red) category first",
-     "Priority 1: unconscious patient — airway, then bleeding control using kit materials",
-     "Priority 2: severe uncontrolled bleeding — direct pressure or tourniquet",
-     "Priority 3: open fractures — sterile dressing to prevent infection",
-     "Walking wounded with minor cuts: clean cloth from clothing — preserve kit for critical cases",
-     "Send for additional supplies immediately"],
-    ["Do not use all dressings on minor wounds while life-threatening cases are untreated",
-     "Do not waste gloves on non-critical tasks"],
-    ["Unconscious patient stops breathing",
-     "Supplies exhausted before life-threatening cases are stabilized"],
-    "HIGH",
-    "WHO Emergency Triage; Mass Casualty Resource Management"
-),
-pair(
-    "Camp of 1000 people, 3 latrines, water pump 800m away.",
-    "URGENT",
-    "Critical sanitation and water deficits — SPHERE minimum standards not met, creating immediate disease outbreak risk.",
-    "Ask: Have any diarrhea cases been reported in the past 48 hours? If yes — activate outbreak response simultaneously.",
-    ["SPHERE standard: 1 latrine per 20 people maximum — 1000 people need 50 latrines, current deficit 47",
-     "SPHERE water standard: minimum 15L per person per day — 800m pump likely inadequate",
-     "Report critical sanitation gap to camp manager and NGO immediately",
-     "Establish emergency defecation field well away from water source and shelters",
-     "Prioritize latrine construction and water trucking request",
-     "Begin daily disease surveillance — log all diarrhea and fever cases"],
-    ["Do not allow open defecation near any water source",
-     "Do not wait for an outbreak to begin before reporting this infrastructure gap"],
-    ["Diarrhea cases appear — immediately activate outbreak response",
-     "Water point fails — emergency water trucking required within 24 hours"],
-    "HIGH",
-    "WHO SPHERE Handbook §4 — Shelter; §3.1 — Water; §3.4 — Sanitation"
-),
-pair(
-    "20 litres clean water, 8 severely dehydrated patients. How do I allocate?",
-    "IMMEDIATE",
-    "Critical water shortage with multiple severe dehydration cases — prioritization required to save the most lives.",
-    None,
-    ["Prioritize: children under 5 and any unconscious patient — highest mortality risk",
-     "ORS requires 1 litre per patient for initial rehydration — 20L covers up to 20 initial doses",
-     "Prepare ORS doses immediately — do not delay",
-     "Unconscious patients unable to drink need IV fluids — urgently evacuate those patients",
-     "Send emergency resupply request for clean water now",
-     "Homemade ORS as resupply arrives: 1L boiled water + 6 tsp sugar + 0.5 tsp salt"],
-    ["Do not give sub-therapeutic ORS doses",
-     "Do not use untreated water to stretch supply"],
-    ["Any patient unable to drink or unconscious — IV urgently needed",
-     "Water resupply does not arrive within 2 hours"],
-    "HIGH",
-    "WHO SPHERE Handbook; ORS Allocation in Resource-Constrained Settings"
-),
-pair(
-    "How do I perform an appendectomy? No surgeon available.",
-    "ROUTINE",
-    "Request is outside BEACON's scope — surgical procedures require trained surgeons and sterile operating conditions.",
-    None,
-    ["This is outside BEACON's scope — seek a trained surgeon or surgical facility urgently",
-     "Provide pain relief if available and approved by medical supervisor",
-     "Keep patient nil by mouth — no food or water",
-     "Evacuate to surgical facility as quickly as possible",
-     "Monitor vital signs during transport"],
-    ["Do not attempt surgical procedures without proper training and sterile conditions"],
-    ["Patient's condition deteriorates — accelerate evacuation"],
-    "LOW",
-    "BEACON Scope Limitation — Surgical Procedures"
-),
-pair(
-    "What medication dose should I give for malaria?",
-    "ROUTINE",
-    "Drug prescription and dosage is outside BEACON's scope — dosing requires clinical assessment and trained prescriber.",
-    None,
-    ["This is outside BEACON's scope — consult a trained clinician or pharmacist",
-     "Report malaria symptoms to health facility for diagnosis and prescription",
-     "If rapid diagnostic test available: test first before any treatment",
-     "Follow your country's national malaria treatment protocol"],
-    ["Do not prescribe or administer malaria drugs without proper diagnosis and training"],
-    ["Patient deteriorates — seek medical care urgently"],
-    "LOW",
-    "BEACON Scope Limitation — Drug Prescription"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# MULTI-PATIENT  (30 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Three patients: A) unconscious adult with head injury, B) child unable to drink with diarrhea, C) adult with broken arm, conscious.",
-    "IMMEDIATE",
-    "Multi-patient triage with two life-threatening conditions and one serious-but-stable injury.",
-    None,
-    ["Patient A — Immediate: airway first (jaw thrust), recovery position, monitor breathing",
-     "Patient B — Immediate: child unable to drink = severe dehydration emergency — IV fluids if available, evacuate",
-     "Patient C — Delayed: stable fracture, immobilize, can wait 30–60 minutes",
-     "Request evacuation: Patient A to surgical facility, Patient B to IV rehydration facility",
-     "One trained responder assigned to each critical patient if resources allow"],
-    ["Do not spend time on the fracture while A and B are untreated",
-     "Do not move Patient A without full spinal precautions"],
-    ["Patient A stops breathing — CPR",
-     "Patient B loses consciousness",
-     "Insufficient responders to cover both critical patients simultaneously"],
-    "HIGH",
-    "WHO Emergency Triage; Multi-Patient Resource Allocation"
-),
-pair(
-    "Family of 6 all with diarrhea. Grandmother cannot stand.",
-    "IMMEDIATE",
-    "Multi-generational diarrhea affecting an entire family unit with one high-risk elderly patient showing severe weakness.",
-    "Ask: Are neighbors or other families in the area also affected? Do all use the same water source?",
-    ["Grandmother (unable to stand): highest priority — assess for severe dehydration, start IV if available",
-     "Children under 5: second priority — ORS 100ml after each loose stool",
-     "All adults who can stand: start ORS and monitor",
-     "Prepare 6 litres of ORS — need 6 litres of boiled water",
-     "Check and stop use of any untreated water source in the household"],
-    ["Do not delay ORS for the grandmother while waiting for evacuation",
-     "Do not use untreated water to prepare ORS"],
-    ["Grandmother or any child unable to drink — IV needed immediately",
-     "Any patient loses consciousness",
-     "Spread confirmed to additional households"],
-    "HIGH",
-    "WHO SPHERE Handbook §3.2; IMCI Multi-patient Family Triage"
-),
-pair(
-    "Earthquake — 3 patients: adult crushing chest, child with arm fracture, elderly woman unconscious.",
-    "IMMEDIATE",
-    "Multi-patient mass casualty triage with two Immediate and one Delayed category injury.",
-    None,
-    ["Elderly woman unconscious — Immediate: check airway and breathing, recovery position if breathing",
-     "Adult crushing chest — Immediate: assess breathing, look for tension pneumothorax (absent breath sounds, trachea deviated)",
-     "Child arm fracture — Delayed: conscious and stable — immobilize, can wait",
-     "Evacuate unconscious elderly woman and adult with chest injury first",
-     "Reassess child every 15 minutes"],
-    ["Do not leave the unconscious elderly woman unattended",
-     "Do not attempt needle decompression without training"],
-    ["Elderly woman stops breathing",
-     "Adult develops worsening breathing difficulty",
-     "Child shows signs of internal injury — increasing pulse, pallor"],
-    "HIGH",
-    "WHO Emergency Triage; START Protocol Multi-patient"
-),
-
-# ════════════════════════════════════════════════════════════════════
-# COMMUNICATION / SMS  (20 pairs)
-# ════════════════════════════════════════════════════════════════════
-
-pair(
-    "Need to send a situation report. GPS: -1.2921, 36.8219. Diarrhea outbreak, 47 cases, need ORS and IV fluids. No voice signal.",
-    "ROUTINE",
-    "SMS situation report preparation for an active outbreak with known GPS coordinates.",
-    None,
-    ["Format under 160 characters: BEACON [date] [-1.2921,36.8219] diarrhea-outbreak 47cases NEED:ORS+IV [your contact]",
-     "Send to district health officer first, then camp manager",
-     "Resend every 6 hours with updated case count until acknowledged",
-     "If no acknowledgment in 2 hours — try alternate contact or send via relay"],
-    ["Do not name the disease in SMS — describe as diarrhea outbreak",
-     "Do not send without GPS coordinates if available"],
-    ["No acknowledgment within 2 hours — try alternate contact method"],
-    "HIGH",
-    "BEACON SMS Protocol; WHO SPHERE — Communication and Reporting"
-),
-pair(
-    "Signal just returned. Managing trauma scene 30 minutes. Need to report. GPS available.",
-    "ROUTINE",
-    "Incident report transmission after period of signal blackout.",
-    None,
-    ["Send immediately while signal is active",
-     "Include: time started, GPS, incident type, number of casualties, injuries, current status, resources needed",
-     "Report to district emergency coordinator",
-     "Follow up with voice call if signal permits",
-     "Document in BEACON incident log for continuity"],
-    ["Do not leave scene without ensuring critical patients are stabilized",
-     "Do not send sensitive patient identifiers without confirming recipient security"],
-    ["Signal lost before acknowledgment — retry when signal returns"],
-    "MEDIUM",
-    "BEACON Communication Protocol; WHO Incident Reporting Format"
-),
-pair(
-    "How do I describe the outbreak in an SMS without causing panic?",
-    "ROUTINE",
-    "Communication guidance for reporting a disease event without triggering community panic.",
-    None,
-    ["Describe symptoms not diagnosis: 'severe diarrhea cases' not disease name",
-     "State what is being done: 'ORS treatment started, health authority notified'",
-     "Include number affected and location to health officials only",
-     "Use community leader to deliver calm factual message to community",
-     "Do not share unconfirmed information"],
-    ["Do not name the disease in community communications",
-     "Do not share case numbers publicly before health authority has been briefed"],
-    ["Community panic leads to unsafe mass movement — inform camp manager immediately"],
-    "MEDIUM",
-    "UNHCR Field Guide — Community Alert Protocol"
-),
-
-]
-
-# ── Multilingual and augmentation variants ────────────────────────────────────
+Rules:
+- Never name specific diseases in situation_summary (write "severe diarrhea" not "cholera")
+- Instructions must be realistic field situations, written as a responder would describe them
+- Include at least one non-English instruction per batch (Swahili, Hindi, French, Arabic, or Hausa)
+- Actions must be specific and measurable, not vague
+- immediate_actions must have at least 3 items
+- do_not must have at least 2 items
+- escalate_if must have at least 2 items
+- Return ONLY a valid JSON array of objects: [{"instruction": "...", "output": { ... }}, ...]
+- Do not include any explanation, markdown, or text outside the JSON array"""
 
 INSTRUCTION_PREFIXES = [
-    "", "URGENT: ", "Please help. ", "Field situation: ",
-    "Need guidance now. ", "Emergency: ", "Responder query: ",
+    "",
+    "URGENT: ",
+    "Please help. ",
+    "Field situation: ",
+    "Need guidance now. ",
+    "Emergency: ",
+    "Responder query: ",
 ]
 
-def augment(pairs, target=700):
+
+def load_chunks(path: Path) -> list[dict]:
+    chunks = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                chunks.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return chunks
+
+
+def generate_pairs(client: InferenceClient, chunk: dict, n: int = 2) -> list[dict]:
+    text   = chunk.get("text", "").strip()
+    source = chunk.get("id", "WHO/SPHERE")
+    if not text:
+        return []
+
+    user_prompt = (
+        f"Protocol chunk (source: {source}):\n"
+        f"---\n{text[:1800]}\n---\n\n"
+        f"Generate {n} realistic field emergency scenarios based strictly on this protocol. "
+        f"Return ONLY the JSON array."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "user", "content": SYSTEM_PROMPT + "\n\n" + user_prompt},
+            ],
+            max_tokens=2048,
+            temperature=0.75,
+        )
+        raw = response.choices[0].message.content.strip()
+        raw = raw.replace("```json", "").replace("```", "").strip()
+
+        # handle response that starts before the array
+        start = raw.find("[")
+        end   = raw.rfind("]") + 1
+        if start == -1 or end == 0:
+            return []
+        raw = raw[start:end]
+
+        pairs = json.loads(raw)
+        validated = []
+        for pair in pairs:
+            if _validate(pair):
+                pair["output"] = json.dumps(pair["output"])
+                validated.append(pair)
+        return validated
+
+    except Exception as e:
+        print(f"    Error: {e}")
+        return []
+
+
+def _validate(pair: dict) -> bool:
+    if not isinstance(pair.get("instruction"), str):
+        return False
+    if len(pair["instruction"].strip()) < 10:
+        return False
+
+    out = pair.get("output", {})
+    if isinstance(out, str):
+        try:
+            out = json.loads(out)
+        except Exception:
+            return False
+
+    required = ["urgency", "situation_summary", "immediate_actions", "do_not", "escalate_if"]
+    if not all(f in out for f in required):
+        return False
+    if out["urgency"] not in ("IMMEDIATE", "URGENT", "ROUTINE"):
+        return False
+    if not isinstance(out["immediate_actions"], list) or len(out["immediate_actions"]) < 1:
+        return False
+    if not isinstance(out["do_not"], list) or len(out["do_not"]) < 1:
+        return False
+    if not isinstance(out["escalate_if"], list) or len(out["escalate_if"]) < 1:
+        return False
+
+    pair["output"] = out
+    return True
+
+
+def augment(pairs: list[dict], target: int) -> list[dict]:
     result = list(pairs)
     while len(result) < target:
-        base = random.choice(pairs)
-        prefix = random.choice(INSTRUCTION_PREFIXES[1:])  # skip empty for augmented
-        augmented = dict(base)
-        augmented["instruction"] = prefix + base["instruction"]
-        result.append(augmented)
+        base   = random.choice(pairs)
+        prefix = random.choice(INSTRUCTION_PREFIXES[1:])
+        aug    = dict(base)
+        aug["instruction"] = prefix + base["instruction"]
+        result.append(aug)
     return result[:target]
 
 
 if __name__ == "__main__":
-    out = Path("training/data/training_data.jsonl")
-    out.parent.mkdir(parents=True, exist_ok=True)
+    if not HF_TOKEN:
+        raise EnvironmentError(
+            "HF_TOKEN not set. Run: export HF_TOKEN=hf_..."
+        )
 
-    all_pairs = augment(PAIRS, target=700)
+    client = InferenceClient(token=HF_TOKEN)
+
+    chunks_path = Path("data/outputs/plain_language_chunks.jsonl")
+    if not chunks_path.exists():
+        raise FileNotFoundError(f"Chunks file not found: {chunks_path}")
+
+    chunks = load_chunks(chunks_path)
+    random.shuffle(chunks)
+    print(f"Loaded {len(chunks)} chunks from corpus.")
+
+    all_pairs: list[dict] = []
+
+    for i, chunk in enumerate(chunks):
+        print(f"[{i+1}/{len(chunks)}] {chunk.get('id', '?')} ...", end=" ", flush=True)
+        pairs = generate_pairs(client, chunk, n=2)
+        all_pairs.extend(pairs)
+        print(f"{len(pairs)} pairs (total: {len(all_pairs)})")
+        time.sleep(1.2)  # stay within HF rate limits
+
+        if len(all_pairs) >= BASE_CAP:
+            print(f"\nReached {BASE_CAP} base pairs. Stopping collection.")
+            break
+
+    if len(all_pairs) < 10:
+        raise RuntimeError(
+            "Too few pairs generated. Check your HF_TOKEN and that you have "
+            "access to google/gemma-4-27b-it on HuggingFace."
+        )
+
+    print(f"\nBase pairs: {len(all_pairs)} — augmenting to {TARGET}...")
+    all_pairs = augment(all_pairs, TARGET)
     random.shuffle(all_pairs)
 
-    with open(out, "w") as f:
+    out_path = Path("training/data/training_data.jsonl")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w") as f:
         for p in all_pairs:
             f.write(json.dumps(p) + "\n")
 
-    print(f"Wrote {len(all_pairs)} pairs → {out}")
-    print(f"Base pairs: {len(PAIRS)} | Augmented to: {len(all_pairs)}")
+    print(f"Wrote {len(all_pairs)} pairs to {out_path}")
 
-    # Quick sanity check
+    # Sanity check
     issues = 0
-    for p in PAIRS:
-        out_obj = json.loads(p["output"])
-        summary = out_obj.get("situation_summary", "")
-        bad_terms = ["cholera", "typhoid", "malaria", "ebola", "dysentery", "measles"]
+    bad_terms = ["cholera", "typhoid", "malaria", "ebola", "dysentery", "measles"]
+    for p in all_pairs:
+        out = json.loads(p["output"]) if isinstance(p["output"], str) else p["output"]
+        summary = out.get("situation_summary", "").lower()
         for term in bad_terms:
-            if term in summary.lower():
-                print(f"  FAIL: disease name '{term}' in situation_summary: {p['instruction'][:50]}")
+            if term in summary:
+                print(f"  WARN: disease name '{term}' in situation_summary")
                 issues += 1
-        if out_obj.get("urgency") not in ["IMMEDIATE", "URGENT", "ROUTINE"]:
-            print(f"  FAIL: bad urgency value in: {p['instruction'][:50]}")
+        if out.get("urgency") not in ("IMMEDIATE", "URGENT", "ROUTINE"):
+            print(f"  WARN: invalid urgency in pair: {p['instruction'][:50]}")
             issues += 1
+
     if issues == 0:
-        print("All sanity checks passed — no disease names in situation_summary, valid urgency values.")
+        print("All sanity checks passed.")
+    else:
+        print(f"{issues} sanity warnings — review before training.")
