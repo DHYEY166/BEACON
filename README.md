@@ -50,7 +50,7 @@ beacon/
 **Base:** Gemma 4 E4B (gemma-4-e4b-it)  
 **Method:** QLoRA fine-tuning via Unsloth + TRL (SFTTrainer)  
 **Hardware:** Colab A100  
-**Dataset:** 700 instruction pairs generated from WHO/SPHERE, IMCI, Red Cross, UNHCR field manuals  
+**Dataset:** 700 instruction pairs grounded in actual corpus chunks, generated using Gemma 4 26B (via HuggingFace Inference API) reading each protocol chunk and producing realistic field scenarios in the BEACON output schema  
 **Final loss:** 0.018  
 **Published:** https://huggingface.co/dhyey166/beacon-gemma4-e4b
 
