@@ -150,9 +150,3 @@ On-device pipeline: BM25 retrieval from `assets/chunk_metadata.json` → Gemma 4
 | Digital Equity | 6 languages, auto-detected, voice-first for low-literacy contexts |
 | Gemma 4 usage | Fine-tuned E4B (edge model), on-device inference, multimodal input |
 
----
-
-## Hackathon
-
-Built for the [Gemma 4 Good Hackathon](https://www.kaggle.com/competitions/gemma-4-good-hackathon).  
-Submission deadline: May 18, 2026.
