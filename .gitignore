@@ -55,3 +55,8 @@ mobile/ios/.xcode.env.local
 # Data pipeline outputs (generated, binary or large)
 data/outputs/
 data/data/
+
+# Evaluation (local only)
+training/evaluate.py
+training/generate_eval_labels.py
+training/data/eval_labels.jsonl
