@@ -253,7 +253,7 @@ function detectNewItems(partial: string, spokenKeys: Set<string>): string[] {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function Home() {
-  const [language, setLanguage]       = useState<Language>('sw');
+  const [language, setLanguage]       = useState<Language>('en');
   const [transcript, setTranscript]   = useState('');
   const [appState, setAppState]       = useState<AppState>('idle');
   const [guidance, setGuidance]       = useState<GuidanceOutput | null>(null);
