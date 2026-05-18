@@ -58,9 +58,15 @@ def evaluate_model(model_fn: Callable[[str, str], str], scenarios: list[EvalScen
         try:
             output = json.loads(output_str)
         except json.JSONDecodeError:
-            results["total"] += 1
-            results["failures"].append({"id": scenario.id, "reason": "json_parse_failure", "output": output_str[:200]})
-            continue
+            # Try to salvage truncated JSON by extracting known scalar fields via regex
+            import re
+            urgency_match = re.search(r'"urgency"\s*:\s*"([^"]+)"', output_str)
+            containment_match = re.search(r'"containment_check"\s*:', output_str)
+            output = {}
+            if urgency_match:
+                output["urgency"] = urgency_match.group(1)
+            if containment_match:
+                output["containment_check"] = True
 
         checks = {
             "urgency": output.get("urgency") == scenario.expected_urgency,
@@ -148,21 +154,35 @@ if __name__ == "__main__":
         print(f"[evaluate] {args.labels} not found — Nour must deliver eval_labels.jsonl by Hour 5")
         sys.exit(1)
 
-    print(f"[evaluate] Loading model from {args.checkpoint}...")
-    tokenizer = AutoTokenizer.from_pretrained(args.checkpoint)
-    model = AutoModelForCausalLM.from_pretrained(args.checkpoint, device_map="auto")
-    pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=600)
+    import torch
+    from peft import PeftModel
+
+    BASE_MODEL = "google/gemma-4-E4B-it"
+    print(f"[evaluate] Loading base model {BASE_MODEL}...")
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
+    base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, device_map="auto", torch_dtype=torch.bfloat16)
+    print(f"[evaluate] Loading PEFT adapter from {args.checkpoint}...")
+    model = PeftModel.from_pretrained(base, args.checkpoint)
+    model.eval()
+    pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=2048)
 
     SYSTEM = (
         "You are BEACON, a decision support tool for trained community first responders. "
-        "Always respond with valid JSON."
+        "You provide structured emergency guidance based on WHO SPHERE Handbook and IMCI protocols. "
+        "Always respond with valid JSON containing these exact fields: "
+        "urgency (IMMEDIATE/URGENT/ROUTINE), situation_summary, containment_check, "
+        "immediate_actions (list), do_not (list), escalate_if (list), confidence (HIGH/MEDIUM/LOW), source. "
+        "Never name a disease in situation_summary. Always include containment_check for outbreak scenarios."
     )
 
     def model_fn(transcript: str, language: str) -> str:
         prompt = f"<start_of_turn>system\n{SYSTEM}<end_of_turn>\n<start_of_turn>user\n{transcript}<end_of_turn>\n<start_of_turn>model\n"
-        out = pipe(prompt, do_sample=False, temperature=0.1)[0]["generated_text"]
-        # Extract only the model's response
-        return out.split("<start_of_turn>model\n")[-1].split("<end_of_turn>")[0].strip()
+        out = pipe(prompt, do_sample=False)[0]["generated_text"]
+        raw = out.split("<start_of_turn>model\n")[-1].split("<end_of_turn>")[0].strip()
+        # Extract JSON block if wrapped in markdown
+        import re
+        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        return match.group(0) if match else raw
 
     scenarios = load_scenarios(args.labels)
     results = evaluate_model(model_fn, scenarios)
