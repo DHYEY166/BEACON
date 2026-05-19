@@ -4,7 +4,7 @@
 
 BEACON puts WHO/SPHERE/IMCI emergency protocols in the hands of frontline responders — via voice, photo, or text — in 6 languages, with spoken guidance. Fine-tuned Gemma 4 E4B, offline-capable RAG, zero clinical jargon.
 
-[![BEACON — AI-powered emergency guidance](../image2.png)](https://youtu.be/hkrDsnnQVAc)
+[![BEACON — AI-powered emergency guidance](assets/image2.png)](https://youtu.be/hkrDsnnQVAc)
 
 **Live demo:** https://web-ten-delta-62.vercel.app  
 **Model:** https://huggingface.co/dhyey166/beacon-gemma4-e4b
